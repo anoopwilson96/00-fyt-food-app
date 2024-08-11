@@ -1,4 +1,3 @@
-https://github.com/anoopwilson96/00-fyt-food-app
 
 ### Fill Your Tummy (FYT) - A MERN Stack Food Ordering App
 
