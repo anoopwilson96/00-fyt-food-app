@@ -23,6 +23,10 @@ const dishSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: 'Menu'
     },
+    menuItem: {
+        type: Schema.Types.ObjectId,
+        ref: 'MenuItem'
+    },
     restaurant: {
         type: Schema.Types.ObjectId,
         ref:'Restaurant'
