@@ -18,7 +18,7 @@ const userSchema = new Schema({
     required:true,
     minLength:66
   },
-  phone: { 
+  mobile: { 
     type: Number,
     maxLength: 10
 },
@@ -27,7 +27,7 @@ profilePic: {
   default:
       "https://res.cloudinary.com/dyuizjyuv/image/upload/v1723432338/depositphotos_137014128-stock-illustration-user-profile-icon_a3ghy1.webp",
 },
-address: {
+location: {
     type: String,
     required: true
 },
