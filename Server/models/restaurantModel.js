@@ -2,6 +2,7 @@ import mongoose from 'mongoose';
 const { Schema } = mongoose;
 
 const restaurantSchema = new Schema({
+
 name:{
   type:String,
   required: true
@@ -10,7 +11,7 @@ cuisine: {
   type:String,
   required:true
 },
-address: {
+location: {
   type: String,
   required: true
 },
@@ -26,13 +27,11 @@ rating: {
 image: {
   type: String,
   default: "https://res.cloudinary.com/dyuizjyuv/image/upload/v1723441019/10047397_z9rayn.jpg"
-},
-menu: [{
-  name: {
-      type: String,
-      required: true
-  }
-}]
+}
+// menuItem: {
+//   type: Schema.Types.ObjectId,
+//   ref: 'MenuItem'
+// }
 })
 
 export const Restaurant = mongoose.model('Restaurant', restaurantSchema);
