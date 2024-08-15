@@ -32,10 +32,6 @@ const orderSchema = new Schema({
         type: String,
         enum: ['pending', 'accepted', 'rejected', 'delivered']
     },
-    address: {
-        type: String,
-        required: true
-    },
     createdAt: {
         type: Date,
         default: Date.now
