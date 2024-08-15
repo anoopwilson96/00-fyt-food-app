@@ -6,9 +6,8 @@ import jwt from 'jsonwebtoken'
 
 const addUser = async (req, res, next) => {
   try {
-console.log('Hello world')
  const {name,email,password,mobile,profilePic,location} = req.body
-  if (!name||email||password||mobile) {
+  if (!name||!email||!password||!mobile) {
     return res.status(400).json({success:false,message:"all field required"})
   }
   const saltRounds = 10;
@@ -27,5 +26,6 @@ console.log('Hello world')
     res.status(error.status || 500).json({message: error.message || "internal server"})
   }
 }
+
 
 export default addUser
