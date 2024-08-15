@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
-import { Restaurant } from './restaurantModel';
+import { Restaurant } from './restaurantModel.js';
+
 
 const { Schema } = mongoose;
 
@@ -19,10 +20,10 @@ const dishSchema = new Schema({
         type: String,
         default: "https://res.cloudinary.com/aw96/image/upload/v1723449727/isolated-food-plate-fork-and-spoon-design-free-vector_ohak6c.jpg"
     },
-    menu: {
-        type: Schema.Types.ObjectId,
-        ref: 'Menu'
-    },
+    // menu: {
+    //     type: Schema.Types.ObjectId,
+    //     ref: 'Menu'
+    // },
     menuItem: {
         type: Schema.Types.ObjectId,
         ref: 'MenuItem'
@@ -33,4 +34,4 @@ const dishSchema = new Schema({
     }
 });
 
-export default mongoose.model('Dish', dishSchema);
+export const Dish = mongoose.model('Dish', dishSchema);
