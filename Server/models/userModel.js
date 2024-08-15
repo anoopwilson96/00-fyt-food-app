@@ -16,11 +16,12 @@ const userSchema = new Schema({
   password:{
     type:String,
     required:true,
-    minLength:66
+    minLength:6
   },
   mobile: { 
     type: Number,
-    maxLength: 10
+    maxLength: 10,
+    required: true
 },
 profilePic: {
   type: String,
@@ -29,8 +30,7 @@ profilePic: {
 },
 location: {
     type: String,
-    required: true
-},
+    },
 cart: [{
     dish: {
         type: Schema.Types.ObjectId,
