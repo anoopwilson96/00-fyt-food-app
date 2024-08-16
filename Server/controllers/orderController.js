@@ -1,8 +1,13 @@
+
+
+//RECHECK
+
 import mongoose from 'mongoose';
 import { User } from '../models/userModel.js'; // Assuming User model is in userModel.js
 import { Restaurant } from '../models/restaurantModel.js'; // Assuming Restaurant model is in restaurantModel.js
 import { Dish } from '../models/dishModel.js'; // Assuming Dish model is in dishModel.js
-const { Order } = mongoose.models; // Using destructuring to get Order model
+import { Order } from "../models/orderModel.js";
+
 
 // Function to calculate total price of order items
 const calculateTotalPrice = (items) => {
@@ -57,8 +62,6 @@ const createOrder = async (req, res, next) => {
   }
 };
 
-
-
 // Function to get all orders (optional)
 const getAllOrders = async (req, res, next) => {
   try {
@@ -102,5 +105,5 @@ const updateOrderStatus = async (req, res, next) => {
     }
     return res.status(200).json({ message: 'Order status updated successfully', order });
   } catch (error) {
-    console.error(error);
-    return res.status(500).json({
+    console.error(error);}
+    return res.status(500).json({ message: 'Internal server error' })}
