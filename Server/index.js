@@ -2,12 +2,14 @@ import express from 'express'
 import dotenv from 'dotenv';
 import { databaseConfig } from './config/mongoConfig.js';
 import apiRouter from './routes/index.js';
+import cookieParser from 'cookie-parser';
 
 const app = express()
 dotenv.config();
 const port = process.env.PORT_NUMBER
 
 //Middlewares
+app.use(cookieParser())
 app.use(express.json())
 
 //Route Handlers
