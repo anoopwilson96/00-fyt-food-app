@@ -1,10 +1,10 @@
 
 import bcrypt from 'bcrypt'
 import { User } from '../models/userModel.js';
-import jwt from 'jsonwebtoken'
+import { generateUserToken } from '../utils/generateToken.js';
 
 
-const addUser = async (req, res, next) => {
+export  const addUser = async (req, res, next) => {
   try {
  const {name,email,password,mobile,profilePic,location} = req.body
   if (!name||!email||!password||!mobile) {
@@ -16,7 +16,7 @@ const addUser = async (req, res, next) => {
   const newUser = new User({name,email,password:hashedPassword,mobile,profilePic,location})
   await newUser.save()
 
-  const token = jwt.sign({email:email,role:'user'},'process.env.JWT_SK')
+  const token = generateUserToken(email)
 
   res.cookie('jwtToken',token)
   res.json({success:true,message:'user created successfully'})
@@ -27,5 +27,43 @@ const addUser = async (req, res, next) => {
   }
 }
 
+export  const userLogin = async (req, res, next) => {
+  try {
+ const {email,password} = req.body
+  if (!email||!password) {
+    return res.status(400).json({success:false,message:"all field required"})
+  }
 
-export default addUser
+  const userExist = await User.findOne({ email });
+
+  if (!userExist) {
+      return res.status(404).json({ success: false, message: "user does not exist" });
+  }
+
+  const passwordMatch = bcrypt.compareSync(password, userExist.password);
+
+  if (!passwordMatch) {
+      return res.status(400).json({ success: false, message: "user not authenticated" });
+  }
+
+  const token = generateUserToken(email);
+
+
+  res.cookie('jwtToken',token)
+  res.json({success:true,message:'user created successfully'})
+
+    
+  } catch (error) {
+    res.status(error.status || 500).json({message: error.message || "internal server"})
+  }
+}
+
+export const userLogout = async (req, res, next) => {
+  try {
+      res.clearCookie("token");
+
+      res.json({ success: true, message: "user logout successfully" });
+  } catch (error) {
+      res.status(error.status || 500).json({ message: error.message || "Internal server error" });
+  }
+};
