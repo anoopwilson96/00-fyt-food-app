@@ -10,6 +10,12 @@ export  const addUser = async (req, res, next) => {
   if (!name||!email||!password||!mobile) {
     return res.status(400).json({success:false,message:"all field required"})
   }
+
+  const userExist = await User.findOne({ email });
+
+  if (!userExist) {
+    return res.status(404).json({ success: false, message: "user exist, Please login" });
+}
   const saltRounds = 10;
   const hashedPassword = bcrypt.hashSync(password, saltRounds);
 
@@ -50,7 +56,7 @@ export  const userLogin = async (req, res, next) => {
 
 
   res.cookie('jwtToken',token)
-  res.json({success:true,message:'user created successfully'})
+  res.json({success:true,message:'user logged in successfully'})
 
     
   } catch (error) {
@@ -67,3 +73,16 @@ export const userLogout = async (req, res, next) => {
       res.status(error.status || 500).json({ message: error.message || "Internal server error" });
   }
 };
+
+
+
+export  const userProfile = async (req, res, next) => {
+  try {
+      const { id } = req.params;
+      const useData = await User.findById(id).select("-password");
+
+      res.json({ success: true, message: "user data fetched", data: useData });
+  } catch (error) {
+      res.status(error.status || 500).json({ message: error.message || "Internal server error" });
+  }
+}
