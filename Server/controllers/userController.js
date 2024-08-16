@@ -24,7 +24,7 @@ export  const addUser = async (req, res, next) => {
 
   const token = generateUserToken(email)
 
-  res.cookie('jwtToken',token)
+  res.cookie('token',token)
   res.json({success:true,message:'user created successfully'})
 
     
@@ -86,3 +86,17 @@ export  const userProfile = async (req, res, next) => {
       res.status(error.status || 500).json({ message: error.message || "Internal server error" });
   }
 }
+
+
+
+export const checkUser = async (req, res, next) => {
+  try {
+      const user = req.user;
+
+      if (!user) {
+          return res.status(400).json({ success: true, message: "user not authenticated" });
+      }
+      res.json({ success: true, message: "User authenticated" });
+  } catch (error) {
+      res.status(error.status || 500).json({ message: error.message || "Internal server error" });
+  }}
