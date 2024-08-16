@@ -3,15 +3,15 @@ import mongoose from 'mongoose';
 const { Schema } = mongoose;
 
 const couponSchema = new Schema({
-  code: {
+  name: {
     type: String,
     required: true,
     unique: true
   },
-  discountType: {
+  code: {
     type: String,
-    enum: ['percentage', 'fixed'],
-    required: true
+    required: true,
+    unique: true
   },
   discountValue: {
     type: Number,
@@ -23,9 +23,7 @@ const couponSchema = new Schema({
   minimumOrderValue: {
     type: Number
   },
-  maximumDiscount: {
-    type: Number
-  },
+
   usageLimit: {
     type: Number
   },
