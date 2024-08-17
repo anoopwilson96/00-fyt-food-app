@@ -1,11 +1,11 @@
-import express from 'express'
 import dotenv from 'dotenv';
+import express from 'express'
 import { databaseConfig } from './config/mongoConfig.js';
 import apiRouter from './routes/index.js';
 import cookieParser from 'cookie-parser';
-
-const app = express()
 dotenv.config();
+const app = express()
+
 const port = process.env.PORT_NUMBER
 
 //Middlewares

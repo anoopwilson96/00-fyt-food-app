@@ -1,21 +1,29 @@
+import { cloudinaryInstance } from "../config/cloudinaryConfig.js";
 import { Restaurant } from "../models/restaurantModel.js";
 
 
 
 export const addRestaurant = async (req,res,next)=>{
   try {
-    const {name,cuisine,location,phone,rating,image} = req.body
+    const {name,cuisine,location,phone,rating} = req.body
+
+  //cloudinary image
+  // console.log('image===',req.file)
+  const uploadResult = await cloudinaryInstance.uploader.upload(req.file.path).catch((error) => { console.log({error,message:"got failed"})})
+  const restaurantImageUrl = uploadResult.secure_url;
+
 
     if (!name||!cuisine||!location||!phone||!rating) {
       return res.status(400).json({success:false,message:"all field required"})
     }
 
-    const restaurant = new Restaurant({name,cuisine,location,phone,rating,image});
-    await Restaurant.save();
+    const restaurant = new Restaurant({name,cuisine,location,phone,rating,image:restaurantImageUrl});
+    await restaurant.save();
     res.status(200).json({success:true,message:'Added restaurant',data:restaurant})   
 
+
   } catch (error) {
-    res.status(error.status || 500).json({message: error.message || "internal server"})
+    res.status(error.status || 500).json({message: error.message || "sorry internal server"})
   }
 }
 
