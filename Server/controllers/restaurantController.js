@@ -7,9 +7,10 @@ export const addRestaurant = async (req,res,next)=>{
   try {
     const {name,cuisine,location,phone,rating} = req.body
 
+
   //cloudinary image
-  // console.log('image===',req.file)
-  const uploadResult = await cloudinaryInstance.uploader.upload(req.file.path).catch((error) => { console.log({error,message:"got failed"})})
+ 
+  const uploadResult = await cloudinaryInstance.uploader.upload(req.file.path,{folder:'00-fyt-food-website'}).catch((error) => { console.log({error,message:"got failed"})})
   const restaurantImageUrl = uploadResult.secure_url;
 
 
