@@ -18,7 +18,7 @@ const dishSchema = new Schema({
     },
     image: {
         type: String,
-        default: "https://res.cloudinary.com/aw96/image/upload/v1723449727/isolated-food-plate-fork-and-spoon-design-free-vector_ohak6c.jpg"
+        default: "https://res.cloudinary.com/aw96/image/upload/v1723921863/00-fyt-food-website/plceholder%20dish%20icon.jpg"
     },
     // menu: {
     //     type: Schema.Types.ObjectId,
