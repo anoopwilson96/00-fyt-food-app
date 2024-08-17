@@ -12,7 +12,7 @@ export const addRestaurant = async (req,res,next)=>{
 
     const restaurant = new Restaurant({name,cuisine,location,phone,rating,image});
     await Restaurant.save();
-    res.status(200).json('Added restaurant')   
+    res.status(200).json({success:true,message:'Added restaurant',data:restaurant})   
 
   } catch (error) {
     res.status(error.status || 500).json({message: error.message || "internal server"})
