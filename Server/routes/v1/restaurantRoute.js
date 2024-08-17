@@ -9,7 +9,7 @@ router.post('/add',addRestaurant);
 router.get('/restaurant/:id',getRestaurant)
 router.get('/all-restaurants',getAllRestaurants)
 router.post('/delete',deleteRestaurant)
-router.patch('/update',updateRestaurant)
+router.patch('/update/:id',updateRestaurant)
 
 
 
