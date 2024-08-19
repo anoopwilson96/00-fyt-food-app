@@ -1,9 +1,10 @@
 import dotenv from 'dotenv';
+dotenv.config();
 import express from 'express'
 import { databaseConfig } from './config/mongoConfig.js';
 import apiRouter from './routes/index.js';
 import cookieParser from 'cookie-parser';
-dotenv.config();
+
 const app = express()
 app.use(express.json())
 app.use(cookieParser())
