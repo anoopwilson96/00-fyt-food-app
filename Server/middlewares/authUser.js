@@ -2,29 +2,35 @@ import jwt from "jsonwebtoken";
 
 
 
-export const authUser = (req,res,next)=>{
+export const authUser = (req, res, next) => {
   try {
-    const {token} = req.cookies
-    console.log(req.cookies,token ,"===token" );
-  
-    if(!token){
-      return res.status(400).json({success:false,message: " sorry user not authenticated"})
+    // Extract token from cookies
+    const { token } = req.cookies;
+
+    // Check if token is present
+    if (!token) {
+      return res.status(401).json({ success: false, message: "User not authenticated. No token provided." });
     }
-    
-    const tokenVerified = jwt.verify(token,process.env.JWT_SK)
-  
+
+    // Verify token using the secret key
+    const tokenVerified = jwt.verify(token, process.env.JWT_SK);
+
+    // Check if token is valid
     if (!tokenVerified) {
-      return res.status(400).json({ success: false, message: "user not authenticated" });
-    } 
+      return res.status(401).json({ success: false, message: "User not authenticated. Token is invalid." });
+    }
 
-     req.user = tokenVerified;
+    // Attach user data to request object
+    req.user = tokenVerified;
 
-     console.log(tokenVerified);
-     
-     next();
-  
+    // Call the next middleware or route handler
+    next();
+
   } catch (error) {
-    console.log(error);
-    
+    // Log the error and send a response
+    console.error('Authentication error:', error);
+    res.status(401).json({ success: false, message: "Authentication failed. Please log in again." });
   }
-}
+};
+
+
