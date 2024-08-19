@@ -26,12 +26,12 @@ rating: {
 },
 image: {
   type: String,
-  default: "https://res.cloudinary.com/dyuizjyuv/image/upload/v1723441019/10047397_z9rayn.jpg"
-}
-// menuItem: {
-//   type: Schema.Types.ObjectId,
-//   ref: 'MenuItem'
-// }
+  default: "https://res.cloudinary.com/aw96/image/upload/v1723441019/10047397_z9rayn.jpg"
+},
+menuItems:[{
+  type: Schema.Types.ObjectId,
+  ref: 'MenuItem',
+}]
 })
 
 export const Restaurant = mongoose.model('Restaurant', restaurantSchema);
