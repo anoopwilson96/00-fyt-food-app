@@ -13,9 +13,6 @@ app.use(cookieParser())
 
 const port = process.env.PORT_NUMBER
 
-
-
-
 //Route Handlers
 app.use('/api',apiRouter)  //Router redirected to index.js(server)>index.js(router)>index.js(v1) ie. localhost3000:api/v1/(needed routes) this is how url will be.
 
