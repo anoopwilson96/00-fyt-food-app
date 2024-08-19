@@ -5,12 +5,15 @@ import apiRouter from './routes/index.js';
 import cookieParser from 'cookie-parser';
 dotenv.config();
 const app = express()
+app.use(express.json())
+app.use(cookieParser())
+
+
 
 const port = process.env.PORT_NUMBER
 
-//Middlewares
-app.use(cookieParser())
-app.use(express.json())
+
+
 
 //Route Handlers
 app.use('/api',apiRouter)  //Router redirected to index.js(server)>index.js(router)>index.js(v1) ie. localhost3000:api/v1/(needed routes) this is how url will be.
