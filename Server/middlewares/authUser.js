@@ -17,10 +17,11 @@ export const authUser = (req,res,next)=>{
       return res.status(400).json({ success: false, message: "user not authenticated" });
     } 
 
-
-     next();
-  
      req.user = tokenVerified;
+
+     console.log(tokenVerified);
+     
+     next();
   
   } catch (error) {
     console.log(error);
