@@ -20,17 +20,10 @@ const dishSchema = new Schema({
         type: String,
         default: "https://res.cloudinary.com/aw96/image/upload/v1723921863/00-fyt-food-website/plceholder%20dish%20icon.jpg"
     },
-    // menu: {
-    //     type: Schema.Types.ObjectId,
-    //     ref: 'Menu'
-    // },
+
     menuItem: {
         type: Schema.Types.ObjectId,
         ref: 'MenuItem'
-    },
-    restaurant: {
-        type: Schema.Types.ObjectId,
-        ref:'Restaurant'
     }
 });
 
