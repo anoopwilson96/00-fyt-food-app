@@ -23,10 +23,10 @@ const userSchema = new Schema({
     maxLength: 10,
     required: true
 },
-profilePic: {
+image: {
   type: String,
   default:
-      "https://res.cloudinary.com/dyuizjyuv/image/upload/v1723432338/depositphotos_137014128-stock-illustration-user-profile-icon_a3ghy1.webp",
+      "https://res.cloudinary.com/aw96/image/upload/v1723432338/depositphotos_137014128-stock-illustration-user-profile-icon_a3ghy1.webp",
 },
 location: {
     type: String,
