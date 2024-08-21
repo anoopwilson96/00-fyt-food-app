@@ -41,7 +41,7 @@ console.log(req.body);
 
     // Send response
     res.cookie('token', token);
-    res.json({ success: true, role: role || 'user', message: 'admin(role) created successfully' });
+    res.json({ success: true, role: role || 'user', message: `${role} created successfully` });
 
   } catch (error) {
     res.status(error.status || 500).json({ message: error.message || "Internal server error" });
@@ -75,7 +75,10 @@ export  const adminLogin = async (req, res, next) => {
 
 
   res.cookie('token',token)
-  res.json({success:true,role:role,message:'Logged in successfully'})
+  res.json({
+    success:true,
+    role:role,
+    message: `${role} logged in successfully`})
 
     
   } catch (error) {
@@ -100,8 +103,9 @@ export const adminLogout = async (req, res, next) => {
 export const adminUpdate = async (req, res, next) => {
   try {
 
-    const { id } = req.params;
-    const { name, mobile} = req.body;
+// Only main admin created can edit rest of admin (admin/delivery/restaurant)
+
+    const {id,name, mobile} = req.body;
 
     // Update admin details
     const admin = await Admin.findByIdAndUpdate(id, {
@@ -113,7 +117,7 @@ export const adminUpdate = async (req, res, next) => {
       return res.status(404).json({ success: false, message: "admin not found" });
     }
 
-    res.status(200).json({ success: true, message: "Admin updated successfully", data:admin });
+    res.status(200).json({ success: true, message: "Admin data updated successfully", data:admin });
   } catch (error) {
     res.status(error.status || 500).json({ message: error.message || "Internal server error" });
   }

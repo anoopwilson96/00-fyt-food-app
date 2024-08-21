@@ -80,9 +80,9 @@ export const userLogout = async (req, res, next) => {
 export  const userProfile = async (req, res, next) => {
   try {
       const { id } = req.params;
-      const useData = await User.findById(id).select("-password");
+      const userData = await User.findById(id).select("-password");
 
-      res.json({ success: true, message: "user data fetched", data: useData });
+      res.json({ success: true, message: "user data fetched", data: userData });
   } catch (error) {
       res.status(error.status || 500).json({ message: error.message || "Internal server error" });
   }

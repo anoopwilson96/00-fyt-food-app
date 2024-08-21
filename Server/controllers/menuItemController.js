@@ -102,7 +102,7 @@ export const getAllMenuItems = async (req, res, next) => {
       .populate('restaurant')
       .populate('dish');
 
-    if (!menuItems.length) {
+    if (!menuItems || menuItems.length===0) {
       return res.status(404).json({ success: false, message: "No menu items found" });
     }
 

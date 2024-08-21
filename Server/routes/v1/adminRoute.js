@@ -11,7 +11,7 @@ router.get('/test',authAdmin,(req,res)=>{ res.send('This is a test request')})
 router.post('/add',addAdmin)
 router.post('/login',adminLogin)
 router.post('/logout',adminLogout)
-router.patch('update/:id',authAdmin,adminUpdate)
+router.patch('/update',authAdmin,adminUpdate)
 
 
 // For front end

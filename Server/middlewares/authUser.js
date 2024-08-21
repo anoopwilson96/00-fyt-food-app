@@ -20,6 +20,10 @@ export const authUser = (req, res, next) => {
       return res.status(401).json({ success: false, message: "User not authenticated. Token is invalid." });
     }
 
+    if (tokenVerified.role !== "user") {
+      return res.status(400).json({ message: "User not authenticated : Login as user " });
+  }
+
     // Attach user data to request object
     req.user = tokenVerified;
 
