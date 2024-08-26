@@ -1,13 +1,16 @@
 import React from 'react';
 import { DarkMode } from '../../UI/DarkMode';
+import { Link } from 'react-router-dom';
 
 export const Header = () => {
   return (
 <main className='mx-auto max-w-4xl '>
 
 <div className="navbar bg-base-100 flex  flex-row items-center justify-between ">
+  <Link to={'/user'}>
+  <img className='h-14 min-w-14 ' src="https://res.cloudinary.com/aw96/image/upload/v1724584697/fyt_bfgnpm.png" alt="" />
+  </Link>
 
-<img className='h-14  ' src="https://res.cloudinary.com/aw96/image/upload/v1724584697/fyt_bfgnpm.png" alt="" />
 
 <div className="form-control">
     <input
@@ -84,8 +87,7 @@ export const Header = () => {
       <li>
         <a className="justify-between">
           Profile
-          <span className="badge">New</span>
-        </a>
+         </a>
       </li>
       <li>
         <a>Settings</a>

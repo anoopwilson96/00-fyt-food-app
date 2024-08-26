@@ -2,6 +2,7 @@ import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import {createBrowserRouter,RouterProvider,} from "react-router-dom";
 import './index.css'
+import { Toaster } from 'react-hot-toast';
 import { UserLayout } from './layout/UserLayout.jsx';
 import {LandingLayout}from './layout/LandingLayout.jsx'
 import ErrorPage from './components/error-page.jsx';
@@ -44,7 +45,7 @@ const router = createBrowserRouter([
     errorElement: <ErrorPage />,
     children: [
       {
-        path: "user",
+        path: "",
         element: <HomePage/>
       },
 
@@ -60,5 +61,6 @@ const router = createBrowserRouter([
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <RouterProvider router={router} />
+    <Toaster />
   </StrictMode>,
 )

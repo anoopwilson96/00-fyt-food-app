@@ -1,16 +1,43 @@
 import React from 'react'
+import axios from 'axios';
+import toast from 'react-hot-toast';
 import { useForm } from "react-hook-form"
+import { useNavigate } from 'react-router-dom';
+
 
 export const LoginPage = () => {
 
-  // const {
-  //   register,
-  //   handleSubmit,
-  //   watch,
-  //   formState: { errors },
-  // } = useForm()
+  const {
+    register,
+    handleSubmit,
+    watch,
+    formState: { errors },
+  } = useForm()
 
-  // const onSubmit = (data) => console.log(data)
+  const navigate = useNavigate();
+  const onSubmit = async (data) =>{
+    try {
+      console.log(data,'====data')
+    
+      const response = await axios ({
+       url:"http://localhost:3000/api/v1/user/login",
+      method: "POST",
+      data,
+      withCredentials: true,
+      })
+      console.log(response);
+      toast.success('Login Success')
+      navigate('/user')
+      
+    } catch (error) {
+      console.log(error)
+      toast.error('Login Failed')
+    }
+
+
+
+
+  } 
 
 
 

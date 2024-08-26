@@ -14,7 +14,7 @@ export default function ErrorPage() {
         <p className="text-gray-600 italic">
           <i>{error.statusText || error.message}</i>
         </p>
-        <Link to={'/'}  className="mt-8 inline-block rounded-lg bg-blue-500 px-5 py-3 text-white transition-all hover:bg-blue-600" >
+        <Link to={'/user'}  className="mt-8 inline-block rounded-lg bg-blue-500 px-5 py-3 text-white transition-all hover:bg-blue-600" >
         Go Back to Homepage
         </Link>
 
