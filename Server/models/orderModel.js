@@ -5,37 +5,41 @@ const { Schema } = mongoose;
 const orderSchema = new Schema({
     user: {
         type: Schema.Types.ObjectId,
-        ref: 'User'
+        ref: 'User',
+        required: true
     },
-    restaurant: {
-        type: Schema.Types.ObjectId,
-        ref: 'Restaurant'
-    },
-    items: [{
-        dish: {
-            type: Schema.Types.ObjectId,
-            ref: 'Dish'
-        },
-        quantity: {
-            type: Number,
-            default: 1
-        },
-        price: {
-            type: Number
+    items: [
+        {
+            dish: {
+                type: Schema.Types.ObjectId,
+                ref: 'Dish',
+                required: true
+            },
+            quantity: {
+                type: Number,
+                required: true
+            },
+            price: {
+                type: Number,
+                required: true
+            }
         }
-    }],
-    totalPrice: {
+    ],
+    totalAmount: {
         type: Number,
         required: true
     },
     status: {
         type: String,
-        enum: ['pending', 'accepted', 'rejected', 'delivered']
+        enum: ['pending', 'paid', 'cancelled'],
+        default: 'pending'
     },
     createdAt: {
         type: Date,
         default: Date.now
     }
 });
+
+
 
 export const Order =  mongoose.model('Order', orderSchema);

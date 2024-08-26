@@ -8,7 +8,7 @@ const router = express.Router()
 
 router.get('/test',(req,res)=>{ res.send('This is a test request')});
 
-router.post('/add',authAdmin,upload.single('image'),addRestaurant);
+router.post('/add',upload.single('image'),authAdmin,addRestaurant);
 router.get('/get/:id',getRestaurant)
 router.get('/all',getAllRestaurants)
 router.post('/delete',authAdmin,deleteRestaurant)

@@ -43,7 +43,7 @@ export const addRestaurant = async (req, res, next) => {
 
 export const getAllRestaurants = async (req, res, next) => {
   try {
-    const restaurants = await Restaurant.find();
+    const restaurants = await Restaurant.find().populate('menuItem');
     res.status(200).json({ success: true, data: restaurants });
   } catch (error) {
     console.error(error); // Log the error for debugging purposes
@@ -67,6 +67,7 @@ export const getRestaurant = async (req, res, next) => {
   }
 };
 
+
 export const deleteRestaurant = async (req, res, next) => {
   try {
     const { id } = req.params;
@@ -84,43 +85,43 @@ export const deleteRestaurant = async (req, res, next) => {
 };
 
 
+
+
+
 export const updateRestaurant = async (req, res, next) => {
   try {
     const { id } = req.params;
     const { name, cuisine, location, phone, rating, image, menuItems } = req.body;
 
-    // Find the restaurant
+    // Upload new image to Cloudinary if a file is provided
+    const imageUrl = req.file ? await imageUploadCloudinary(req.file.path) : image;
+
+    // Fetch existing restaurant
     const restaurant = await Restaurant.findById(id);
     if (!restaurant) {
       return res.status(404).json({ success: false, message: "Restaurant not found" });
     }
 
-    // Upload image to Cloudinary if provided
-    const imageUrl = req.file ? await imageUploadCloudinary(req.file.path) : image;
-
     // Update fields
-    if (name) restaurant.name = name;
-    if (cuisine) restaurant.cuisine = cuisine;
-    if (location) restaurant.location = location;
-    if (phone) restaurant.phone = phone;
-    if (rating) restaurant.rating = rating;
-    if (imageUrl) restaurant.image = imageUrl;
+    restaurant.name = name || restaurant.name;
+    restaurant.cuisine = cuisine || restaurant.cuisine;
+    restaurant.location = location || restaurant.location;
+    restaurant.phone = phone || restaurant.phone;
+    restaurant.rating = rating || restaurant.rating;
+    restaurant.image = imageUrl || restaurant.image;
 
-    // Update menuItems if provided (replace the array)
-    if (menuItems && Array.isArray(menuItems)) {
-      restaurant.menuItems = menuItems;
+    // Append new menu items if provided
+    if (Array.isArray(menuItems)) {
+      restaurant.menuItems = Array.from(new Set([...restaurant.menuItems, ...menuItems]));
     }
 
-    // Save the updated restaurant
+    // Save updated restaurant
     await restaurant.save();
 
-    // Fetch the updated restaurant data
-    const updatedRestaurant = await Restaurant.findById(id);
+    res.status(200).json({ success: true, message: "Restaurant updated successfully", data: restaurant });
 
-    res.status(200).json({ success: true, message: "Restaurant updated successfully", data: updatedRestaurant });
   } catch (error) {
-    console.error(error);
+    console.error(error); // Log the error for debugging purposes
     res.status(error.status || 500).json({ message: error.message || "Internal server error" });
   }
 };
-
