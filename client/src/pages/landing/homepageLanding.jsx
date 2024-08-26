@@ -69,9 +69,20 @@ export const HomepageLanding = () => {
           <button className="btn btn-outline">Login</button>
         </div>
 
+<div className="my-8 p-6 bg-base-200 rounded-lg shadow-lg text-center mt-12">
+  <h2 className="text-2xl font-bold mb-4">Partner with Fill Your Tummy</h2>
+  <p className="text-lg leading-relaxed">
+    Elevate your business by partnering with FYT (Fill Your Tummy)! Whether you're a restaurant aiming to expand your reach or a delivery partner looking to boost your earnings, we offer seamless integration and unmatched support. Join our growing network and connect with customers eager to enjoy your delicious offerings. Let’s grow together!
+  </p>
+  <button className="mt-8 btn btn-primary">Get Started</button>
+
+</div>
+
+
+
         {/* Restaurant & Driver Login Section */}
         <div className="text-center mt-12">
-          <h3 className="text-xl font-bold">Partner with Us</h3>
+          <h3 className="text-xl font-bold">Partner's Login</h3>
           <div className="space-x-4 mt-4">
             <button className="btn btn-secondary">Restaurant Login</button>
             <button className="btn btn-secondary">Driver Login</button>
