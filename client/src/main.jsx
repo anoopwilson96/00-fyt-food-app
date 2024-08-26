@@ -9,6 +9,7 @@ import { HomePage } from './pages/user/homePage.jsx';
 import { LoginPage } from './pages/landing/LoginPage.jsx';
 import { CartPage} from './pages/user/CartPage.jsx'
 import { HomepageLanding } from './pages/landing/homepageLanding.jsx';
+import { SignupLanding } from './pages/landing/signupLanding.jsx';
 
 
 
@@ -28,6 +29,10 @@ const router = createBrowserRouter([
         path: "login",
         element: <LoginPage/>
       },
+      {
+        path: "signup",
+        element: <SignupLanding/>
+      }
     ],
   },
 
