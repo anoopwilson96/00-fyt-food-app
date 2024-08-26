@@ -1,11 +1,17 @@
 import dotenv from 'dotenv';
 dotenv.config();
 import express from 'express'
+import cors from 'cors'
 import { databaseConfig } from './config/mongoConfig.js';
 import apiRouter from './routes/index.js';
 import cookieParser from 'cookie-parser';
 
 const app = express()
+
+app.use(cors({
+ origin: "http://localhost:5174",  
+ credentials: true
+}))
 app.use(express.json())
 app.use(cookieParser())
 

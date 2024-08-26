@@ -17,6 +17,7 @@ export const addToCart = async (req, res, next) => {
       return res.status(404).json({ success: false, message: 'Dish not found' });
     }
 
+
     const existingItem = cart.items.find(item => item.dish.equals(dishId));
 
     if (existingItem) {
@@ -24,6 +25,7 @@ export const addToCart = async (req, res, next) => {
     } else {
       cart.items.push({ dish: dishId, quantity, price: dish.price });
     }
+    
 
     await cart.save();
 
