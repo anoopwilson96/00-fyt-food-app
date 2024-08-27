@@ -20,8 +20,8 @@ export const Header = () => {
     />
   </div>
 
-  <select className="select select-ghost max-w-xs">
-     <option disabled selected>Choose location</option>
+  <select className="select select-ghost max-w-xs" defaultValue="">
+     <option disabled>Choose location</option>
      <option>Whistler</option>
      <option>Vancouver</option>
      <option>Burnaby</option>
