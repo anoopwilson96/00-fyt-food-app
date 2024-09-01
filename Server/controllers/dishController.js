@@ -112,3 +112,8 @@ export const updateDish = async (req, res, next) => {
     res.status(error.status || 500).json({ message: error.message || "Internal server error" });
   }
 };
+
+
+
+// Add BULK data to MongoDB
+
