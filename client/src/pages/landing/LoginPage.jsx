@@ -3,6 +3,7 @@ import axios from 'axios';
 import toast from 'react-hot-toast';
 import { useForm } from "react-hook-form"
 import { useNavigate } from 'react-router-dom';
+import { userLogin } from '../../services/userAPI';
 
 
 export const LoginPage = () => {
@@ -17,21 +18,22 @@ export const LoginPage = () => {
   const navigate = useNavigate();
   const onSubmit = async (data) =>{
     try {
-      console.log(data,'====data')
-    
-      const response = await axios ({
-       url:"http://localhost:3000/api/v1/user/login",
-      method: "POST",
-      data,
-      withCredentials: true,
-      })
+     const response = await userLogin(data)
+
+     if (response.success === true) {
       console.log(response);
-      toast.success('Login Success')
-      navigate('/user')
+      toast.success('Login Success');
+      navigate('/user');
+    } else {
+      toast.error('Login Failed');
+      navigate('/login')
+    }
       
     } catch (error) {
       console.log(error)
       toast.error('Login Failed')
+      navigate('/login')
+
     }
 
 
