@@ -61,8 +61,8 @@ export const getMenuItem = async (req, res, next) => {
 export const getAllMenuItems = async (req, res, next) => {
   try {
     const menuItems = await MenuItem.find()
-      .populate('restaurant')
-      .populate('dish');
+      // .populate('restaurant')
+      // .populate('dish');
 
     if (!menuItems || menuItems.length===0) {
       return res.status(404).json({ success: false, message: "No menu items found" });
