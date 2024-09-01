@@ -41,7 +41,9 @@ const router = createBrowserRouter([
 
   {
     path: "user",
-    element: <UserLayout/>,
+    element: (<UserAuth> 
+                <UserLayout/> 
+             </UserAuth>),
     errorElement: <ErrorPage />,
     children: [
       {
