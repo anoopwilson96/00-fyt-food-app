@@ -10,7 +10,7 @@ router.get('/test',(req,res)=>{ res.send('This is a test request')});
 router.post('/add',upload.single('image'),authAdmin,addMenuItem);
 router.get('/get/:id',getMenuItem);
 router.get('/all',getAllMenuItems);
-router.patch('/update',upload.single('image'),authAdmin,updateMenuItem);
+router.patch('/update/:id',upload.single('image'),authAdmin,updateMenuItem);
 
 
 
