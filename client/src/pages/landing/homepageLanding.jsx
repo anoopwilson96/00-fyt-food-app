@@ -23,7 +23,7 @@ export const HomepageLanding = () => {
   </div>
   <div className="carousel-item max-w-2xl max-h-96">
     <img
-      src="https://pixabay.com/get/g89384946a7f58c1c6b0d8dbb376d3a8359aae9488e3ed40d134162ad9a89532ada6b9b863296334812205f570e2b0f3e6fe5cab21b1ad0e9581e870bfb2ef4864aa31844cc6704d5e2807e79f7a6e758_640.jpg"
+      src="https://res.cloudinary.com/aw96/image/upload/v1724662655/g89384946a7f58c1c6b0d8dbb376d3a8359aae9488e3ed40d134162ad9a89532ada6b9b863296334812205f570e2b0f3e6fe5cab21b1ad0e9581e870bfb2ef4864aa31844cc6704d5e2807e79f7a6e758_640_fkywvk.jpg"
       alt="Drink" />
   </div>
   <div className="carousel-item max-w-2xl max-h-96 ">
@@ -185,10 +185,10 @@ export const HomepageLanding = () => {
 
         {/* Restaurant & Driver Login Section */}
         <div className="text-center mt-12">
-          <h3 className="text-xl font-bold">Partner's Login</h3>
+          <h3 className="text-xl font-bold">Partner's Homepage</h3>
           <div className="space-x-4 mt-4">
-            <button className="btn btn-secondary">Restaurant Login</button>
-            <button className="btn btn-secondary">Driver Login</button>
+            <button className="btn btn-secondary">Restaurant Homepage</button>
+            <button className="btn btn-secondary">Driver Homepage</button>
           </div>
         </div>
 
