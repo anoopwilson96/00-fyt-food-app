@@ -43,7 +43,7 @@ export const addRestaurant = async (req, res, next) => {
 
 export const getAllRestaurants = async (req, res, next) => {
   try {
-    const restaurants = await Restaurant.find().populate('menuItem');
+    const restaurants = await Restaurant.find().populate('menuItems');
     res.status(200).json({ success: true, data: restaurants });
   } catch (error) {
     console.error(error); // Log the error for debugging purposes
@@ -114,7 +114,6 @@ export const updateRestaurant = async (req, res, next) => {
     if (Array.isArray(menuItems)) {
       restaurant.menuItems = Array.from(new Set([...restaurant.menuItems, ...menuItems]));
     }
-
     // Save updated restaurant
     await restaurant.save();
 
