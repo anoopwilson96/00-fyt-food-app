@@ -26,5 +26,3 @@ image: {
 });
 
 export const MenuItem = mongoose.model('MenuItem', menuItemSchema);
-
-
