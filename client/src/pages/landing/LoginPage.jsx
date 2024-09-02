@@ -2,8 +2,9 @@ import React from 'react'
 import axios from 'axios';
 import toast from 'react-hot-toast';
 import { useForm } from "react-hook-form"
-import { useNavigate } from 'react-router-dom';
-import { userLogin } from '../../services/userAPI';
+import { useNavigate} from 'react-router-dom';
+import { useEffect } from 'react';
+import { userLogin, IsLoggedIn } from '../../services/userAPI';
 
 
 export const LoginPage = () => {
@@ -16,6 +17,21 @@ export const LoginPage = () => {
   } = useForm()
 
   const navigate = useNavigate();
+
+
+  useEffect(() => {
+    const checkLogin = async () => {
+      const response = await IsLoggedIn();
+      if (response?.success) {
+        navigate('/user'); // Redirect to /user if already logged in
+      }
+    };
+    checkLogin();
+  }, [navigate]);
+
+
+
+
   const onSubmit = async (data) =>{
     try {
      const response = await userLogin(data)
@@ -35,10 +51,6 @@ export const LoginPage = () => {
       navigate('/login')
 
     }
-
-
-
-
   } 
 
 
