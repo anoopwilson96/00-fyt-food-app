@@ -2,7 +2,7 @@ import React from 'react';
 
 export const HomePage = () => {
   return (
-    <div className="flex flex-col lg:flex-row">
+    <div className="flex flex-col lg:flex-row mx-auto">
      <main className="flex-1 lg:ml-64 p-6 lg:p-10">
 
         {/* Popular Restaurants Section */}
