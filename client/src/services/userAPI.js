@@ -52,7 +52,7 @@ export const fetchUser = async ()=>{
       method: "GET",
       withCredentials: true 
     })
-  console.log(response,"====response")
+ // console.log(response,"====response")
   return response?.data?.data;
   } catch (error) {
     console.log("Error fetching user data")
