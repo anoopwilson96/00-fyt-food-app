@@ -1,31 +1,65 @@
 import React from 'react';
 import { DarkMode } from '../../UI/DarkMode';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { UserLogout } from '../../services/userAPI';
+import { axiosInstance } from '../../config/axiosInstance';
+import { useState, useEffect } from 'react';
 
 export const Header = () => {
-  return (
-<main className='mx-auto max-w-4xl '>
+const navigate = useNavigate()
+const [user,setUser] = useState({})
 
-<div className="navbar bg-base-100 flex  flex-row items-center justify-between ">
+//logout
+const logout =async ()=>{
+await UserLogout();
+navigate("/")}
+
+//fetch user profile pic in header
+
+const fetchUser = async ()=>{
+  try {
+    const  response = await axiosInstance({
+      url: "/user/profile" ,
+      method: "GET",
+      withCredentials: true 
+    })
+  console.log(response,"====response")
+  setUser(response?.data?.data)
+  } catch (error) {
+    console.log("Error fetching profile pic")
+  }
+}
+
+
+useEffect(()=>{
+  fetchUser()
+},[])
+
+  return (
+<main className='mx-auto bg-base-200 '>
+
+<div className="navbar flex  flex-row items-center justify-around max-w-6xl mx-auto text-gray-800">
   <Link to={'/user'}>
   <img className='h-14 min-w-14 ' src="https://res.cloudinary.com/aw96/image/upload/v1724584697/fyt_bfgnpm.png" alt="" />
   </Link>
 
 
-<div className="form-control">
-    <input
-      type="text"
-      placeholder="Search"
-      className="input input-bordered w-24 md:w-44"
-    />
+  <div className='hidden md:flex flex-row gap-5 px-5'>
+     <div className="form-control">
+         <input
+          type="text"
+          placeholder="Search"
+          className="input input-bordered w-24 md:w-44"/>
+      </div>
+
+      <select className="bg-white select select-ghost max-w-50" defaultValue="">
+            <option disabled>Choose location</option>
+            <option>Whistler</option>
+            <option>Vancouver</option>
+            <option>Burnaby</option>
+       </select>
   </div>
 
-  <select className="select select-ghost max-w-xs" defaultValue="">
-     <option disabled>Choose location</option>
-     <option>Whistler</option>
-     <option>Vancouver</option>
-     <option>Burnaby</option>
-  </select>
 
  <DarkMode/>
 
@@ -78,7 +112,7 @@ export const Header = () => {
       <div className="w-10 rounded-full">
         <img
           alt="Profile avatar"
-          src="https://res.cloudinary.com/aw96/image/upload/v1723432338/depositphotos_137014128-stock-illustration-user-profile-icon_a3ghy1.webp"
+          src={user?.image}
         />
       </div>
     </div>
@@ -87,21 +121,36 @@ export const Header = () => {
       className="menu menu-sm dropdown-content bg-base-100 rounded-box z-[1] mt-3 w-52 p-2 shadow"
     >
       <li>
-        <a className="justify-between">
+        <Link to={'/user/my-profile'} className="justify-between">
           Profile
-         </a>
+         </Link>
       </li>
       <li>
-        <a>Settings</a>
-      </li>
-      <li>
-        <a>Logout</a>
+        <Link onClick={logout} >Logout </Link>
       </li>
     </ul>
   </div>
 
 </div>
-    </main>
+
+<div className='header3  md:hidden flex flex-row justify-center py-5 mx-auto gap-5'>
+<div className="form-control">
+    <input
+      type="text"
+      placeholder="Search"
+      className="input input-bordered w-24 md:w-44"
+    />
+  </div>
+
+  <select className="select select-ghost max-w-50" defaultValue="">
+     <option disabled>Choose location</option>
+     <option>Whistler</option>
+     <option>Vancouver</option>
+     <option>Burnaby</option>
+  </select>
+</div>
+
+</main>
 
   );
 };
