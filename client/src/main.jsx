@@ -6,12 +6,13 @@ import { Toaster } from 'react-hot-toast';
 import { UserLayout } from './layout/UserLayout.jsx';
 import {LandingLayout}from './layout/LandingLayout.jsx'
 import ErrorPage from './components/error-page.jsx';
-import { HomePage } from './pages/user/homePage.jsx';
+import { HomePage } from './pages/user/HomePage.jsx';
 import { LoginPage } from './pages/landing/LoginPage.jsx';
 import { CartPage} from './pages/user/CartPage.jsx'
 import { HomepageLanding } from './pages/landing/homepageLanding.jsx';
 import { SignupLanding } from './pages/landing/signupLanding.jsx';
-
+import { UserAuth } from './protected routes/UserAuth.jsx';
+import { Profile } from './pages/user/profile.jsx';
 
 
 
@@ -49,6 +50,11 @@ const router = createBrowserRouter([
       {
         path: "",
         element: <HomePage/>
+      },
+      {
+        path:"my-profile",
+        element: <Profile/>
+
       },
 
       {
