@@ -69,7 +69,7 @@ export const userLogout = async (req, res, next) => {
   try {
       res.clearCookie("token");
 
-      res.json({ success: true, message: "user logout successfully" });
+      res.status(200).json({ success: true, message: "user logout successfully" });
   } catch (error) {
       res.status(error.status || 500).json({ message: error.message || "Internal server error" });
   }
@@ -79,8 +79,9 @@ export const userLogout = async (req, res, next) => {
 
 export  const userProfile = async (req, res, next) => {
   try {
-      const { id } = req.params;
-      const userData = await User.findById(id).select("-password");
+      // const { id } = req.params;
+      const {email} = req.cookies
+      const userData = await User.findOne(email).select("-password");
 
       res.json({ success: true, message: "user data fetched", data: userData });
   } catch (error) {

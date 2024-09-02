@@ -10,12 +10,11 @@ router.get('/test',(req,res)=>{ res.send('This is a test request')})
 router.post('/add',authUser,addUser)
 router.post('/login',userLogin)
 router.post('/logout',userLogout)
-router.get('/profile/:id',authUser,userProfile)
+router.get('/profile',authUser,userProfile)
 router.patch('/update/:id',upload.single('image'),authUser,userUpdate)
 
 //For Front End purpose
 
 router.get("/check-user", authUser,checkUser);
-
 
 export default router
