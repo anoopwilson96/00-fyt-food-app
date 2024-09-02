@@ -7,7 +7,7 @@ export const HeaderLanding = () => {
   return (
   <>      
     <header className="w-full bg-base-200">
-      <div className="navbar flex flex-row items-center justify-between p-4">
+      <div className="navbar flex flex-row items-center justify-between px-5 md:px-40 ">
         <Link to={'/'}>
         <img
         className="h-14"
