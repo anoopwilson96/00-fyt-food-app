@@ -23,7 +23,7 @@ const fetchUser = async ()=>{
       method: "GET",
       withCredentials: true 
     })
-  console.log(response,"====response")
+ // console.log(response,"====response")
   setUser(response?.data?.data)
   } catch (error) {
     console.log("Error fetching profile pic")
@@ -38,7 +38,7 @@ useEffect(()=>{
   return (
 <main className='mx-auto bg-base-200 '>
 
-<div className="navbar flex  flex-row items-center justify-around max-w-6xl mx-auto text-gray-800">
+<div className="navbar  flex  flex-row items-center justify-around max-w-6xl mx-auto text-gray-800">
   <Link to={'/user'}>
   <img className='h-14 min-w-14 ' src="https://res.cloudinary.com/aw96/image/upload/v1724584697/fyt_bfgnpm.png" alt="" />
   </Link>
@@ -112,7 +112,7 @@ useEffect(()=>{
       <div className="w-10 rounded-full">
         <img
           alt="Profile avatar"
-          src={user?.image}
+          src={user?.image ||"https://res.cloudinary.com/aw96/image/upload/v1723432338/depositphotos_137014128-stock-illustration-user-profile-icon_a3ghy1.webp" }
         />
       </div>
     </div>
