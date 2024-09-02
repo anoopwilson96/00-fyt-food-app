@@ -59,8 +59,8 @@ export const HomepageLanding = () => {
 
 </div>
 
-<div className=" flex flex-row justify-center items-center  ">
-    <img className='rounded-xl max-w-2xl max-h-96' src="https://res.cloudinary.com/aw96/image/upload/v1723441019/10047397_z9rayn.jpg" />
+<div className=" flex flex-row justify-center items-center ">
+    <img className='rounded-xl  max-h-96  lg:max-w-2xl ' src="https://res.cloudinary.com/aw96/image/upload/v1723441019/10047397_z9rayn.jpg" />
   </div>
 
 
@@ -187,7 +187,7 @@ export const HomepageLanding = () => {
         <div className="text-center mt-12">
           <h3 className="text-xl font-bold">Partner's Homepage</h3>
           <div className="space-x-4 mt-4">
-            <button className="btn btn-secondary">Restaurant Homepage</button>
+            <button className="btn btn-secondary mb-10">Restaurant Homepage</button>
             <button className="btn btn-secondary">Driver Homepage</button>
           </div>
         </div>
