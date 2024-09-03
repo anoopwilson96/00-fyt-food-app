@@ -60,13 +60,6 @@ export const fetchUser = async ()=>{
 }
 
 
-
-
-
-
-
-
-
 // check user login at "/"
 
   export const IsLoggedIn = async () => {
