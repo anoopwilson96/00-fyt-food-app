@@ -36,11 +36,11 @@ useEffect(()=>{
 },[])
 
   return (
-<main className='mx-auto bg-base-200 '>
+<main className='mx-auto bg-base-300 '>
 
 <div className="navbar  flex  flex-row items-center justify-around max-w-6xl mx-auto text-gray-800">
   <Link to={'/user'}>
-  <img className='h-14 min-w-14 ' src="https://res.cloudinary.com/aw96/image/upload/v1724584697/fyt_bfgnpm.png" alt="" />
+  <img className='h-20 lg:h-24 min-w-20 ' src="https://res.cloudinary.com/aw96/image/upload/v1724584697/fyt_bfgnpm.png" alt="" />
   </Link>
 
 
@@ -69,10 +69,10 @@ useEffect(()=>{
 
   <div className="dropdown dropdown-end">
     <div tabIndex={0} role="button" className="btn btn-ghost btn-circle">
-      <div className="indicator">
+      <div className="indicator text-slate-600">
         <svg
           xmlns="http://www.w3.org/2000/svg"
-          className="h-5 w-5"
+          className="h-6 w-6  lg:h-8 lg:w-8"
           fill="none"
           viewBox="0 0 24 24"
           stroke="currentColor"
