@@ -16,21 +16,3 @@ export const getAllRestaurants = async ()=>{
 
   }
 }
-
-// Get A restaurant
-
-export const getOneRestaurant= async () =>{
-  try {
-  const response = await axiosInstance({
-    url: "/restaurant/:id",
-    method: "GET"
-  })
-return response?.data?.data
-
-    
-  } catch (error) {
-    console.log(error,"Error in fetching")
-  }
-}
-
-

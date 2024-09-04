@@ -60,18 +60,18 @@ export const fetchUser = async ()=>{
 }
 
 
-// check user login at "/"
+// // check user login at "/"
 
-  export const IsLoggedIn = async () => {
-    try {
-      const response = await axiosInstance({
-        url: "/user/check-user",
-        method: "GET",
-        withCredentials: true
-      });
-      return response?.data; // Return the response data
-    } catch (error) {
-      console.log("Please Login");
-      return null; // Return null in case of error
-    }
-  };
+//   export const IsLoggedIn = async () => {
+//     try {
+//       const response = await axiosInstance({
+//         url: "/user/check-user",
+//         method: "GET",
+//         withCredentials: true
+//       });
+//       return response?.data; // Return the response data
+//     } catch (error) {
+//       console.log("Please Login");
+//       return null; // Return null in case of error
+//     }
+//   };
