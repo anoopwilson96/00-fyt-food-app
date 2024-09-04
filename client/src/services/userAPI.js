@@ -15,7 +15,7 @@ export const userLogin = async (data)=>{
      data,
      withCredentials: true,
      })
-  return response?.data;
+  return response?.data?.data;
   } catch (error) {
     console.log(error)
   }
