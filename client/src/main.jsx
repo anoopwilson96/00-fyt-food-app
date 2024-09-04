@@ -13,6 +13,8 @@ import { HomepageLanding } from './pages/landing/homepageLanding.jsx';
 import { SignupLanding } from './pages/landing/signupLanding.jsx';
 import { UserAuth } from './protected routes/UserAuth.jsx';
 import { Profile } from './pages/user/profile.jsx';
+import { MenuItem } from './pages/user/menuItem.jsx';
+import { RestaurantPage } from './pages/user/restaurantPage.jsx';
 
 
 
@@ -55,6 +57,18 @@ const router = createBrowserRouter([
         path:"my-profile",
         element: <Profile/>
 
+      },
+      {
+        path:"menu-item/:id",
+        element: <MenuItem/>
+      },
+      {
+        path: "menu-item/:id/restaurant/:id" ,
+        element: <RestaurantPage/>
+      },
+      {
+        path: "restaurant/:id" ,
+        element: <RestaurantPage/>
       },
 
       {
