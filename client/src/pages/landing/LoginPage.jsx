@@ -4,8 +4,8 @@ import toast from 'react-hot-toast';
 import { useForm } from "react-hook-form"
 import { useNavigate} from 'react-router-dom';
 import { useEffect } from 'react';
-// import { userLogin, IsLoggedIn } from '../../services/userAPI';
-import { userLogin } from '../../services/userAPI';
+import { userLogin, IsLoggedIn } from '../../services/userAPI';
+// import { userLogin } from '../../services/userAPI';
 
 
 export const LoginPage = () => {
@@ -20,15 +20,15 @@ export const LoginPage = () => {
   const navigate = useNavigate();
 
 
-  // useEffect(() => {
-  //   const checkLogin = async () => {
-  //     const response = await IsLoggedIn();
-  //     if (response?.success) {
-  //       navigate('/user'); // Redirect to /user if already logged in
-  //     }
-  //   };
-  //   checkLogin();
-  // }, [navigate]);
+  useEffect(() => {
+    const checkLogin = async () => {
+      const response = await IsLoggedIn();
+      if (response?.success) {
+        navigate('/user'); // Redirect to /user if already logged in
+      }
+    };
+    checkLogin();
+  }, [navigate]);
 
 
 
