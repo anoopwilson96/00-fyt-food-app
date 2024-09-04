@@ -40,7 +40,15 @@ console.log(req.body);
     const token = generateToken(email, role);
 
     // Send response
-    res.cookie('token', token);
+    res.cookie('token', token,
+      {
+        sameSite: 'None',
+        secure: true,
+        httpOnly: true,
+        path: '/',
+        maxAge: 2 * 60 * 60 * 1000 // 2 hours in milliseconds
+      }
+    );
     res.json({ success: true, role: role || 'user', message: `${role} created successfully` });
 
   } catch (error) {
@@ -74,7 +82,13 @@ export  const adminLogin = async (req, res, next) => {
   const token = generateToken(email,role);
 
 
-  res.cookie('token',token)
+  res.cookie('token',token,{
+    sameSite: 'None',
+    secure: true,
+    httpOnly: true,
+    path: '/',
+    maxAge: 2 * 60 * 60 * 1000 // 2 hours in milliseconds
+  })
   res.json({
     success:true,
     role:role,

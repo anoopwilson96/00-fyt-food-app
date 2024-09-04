@@ -29,7 +29,8 @@ export  const addUser = async (req, res, next) => {
     sameSite: 'None',
     secure: true,
     httpOnly: true,
-    path: '/'
+    path: '/',
+    maxAge: 2 * 60 * 60 * 1000 // 2 hours in milliseconds
   })
   res.json({success:true,message:'user created successfully'})
 
@@ -66,7 +67,8 @@ export  const userLogin = async (req, res, next) => {
     sameSite: 'None',
     secure: true,
     httpOnly: true,
-    path: '/'
+    path: '/',
+    maxAge: 2 * 60 * 60 * 1000 // 2 hours in milliseconds
   })
   res.status(200).json({success:true,message:'user logged in successfully'})
 
