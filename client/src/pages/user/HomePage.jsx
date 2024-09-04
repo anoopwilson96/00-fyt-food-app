@@ -11,8 +11,8 @@ import { getAllRestaurants } from '../../services/restaurantAPI';
 
 export const HomePage = () => {
   const settings = {
-    dots: false,
-    infinite: false,
+    dots: true,
+    infinite: true,
     speed: 500,
     centerPadding: "60px",
     slidesToShow: 8,
