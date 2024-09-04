@@ -7,7 +7,7 @@ const router = express.Router()
 
 router.get('/test',(req,res)=>{ res.send('This is a test request')})
 
-router.post('/add',authUser,addUser)
+router.post('/add',addUser)
 router.post('/login',userLogin)
 router.post('/logout',userLogout)
 router.get('/profile',authUser,userProfile)

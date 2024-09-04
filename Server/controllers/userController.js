@@ -7,14 +7,15 @@ import { generateUserToken } from '../utils/generateToken.js';
 export  const addUser = async (req, res, next) => {
   try {
  const {name,email,password,mobile,profilePic,location} = req.body
-  if (!name||!email||!password||!mobile) {
-    return res.status(400).json({success:false,message:"all field required"})
+  if (!name||!email||!password) {
+  
+    return res.status(401).json({success:false,message:"all field required"})
   }
 
   const userExist = await User.findOne({ email });
 
   if (userExist) {
-    return res.status(404).json({ success: false, message: "user exist, Please login" });
+    return res.status(200).json({ success: false, sameAccount:true, message: "user exist, Please login" });
 }
   const saltRounds = 10;
   const hashedPassword = bcrypt.hashSync(password, saltRounds);
@@ -27,7 +28,7 @@ export  const addUser = async (req, res, next) => {
   res.cookie('token',token)
   res.json({success:true,message:'user created successfully'})
 
-    
+
   } catch (error) {
     res.status(error.status || 500).json({message: error.message || "internal server"})
   }
@@ -80,7 +81,7 @@ export const userLogout = async (req, res, next) => {
 export  const userProfile = async (req, res, next) => {
   try {
       // const { id } = req.params;
-      const {email} = req.cookies
+      const {email} = req.cookies;
       const userData = await User.findOne(email).select("-password");
 
       res.json({ success: true, message: "user data fetched", data: userData });

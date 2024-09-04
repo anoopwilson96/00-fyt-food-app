@@ -38,7 +38,6 @@ export const LoginPage = () => {
      const response = await userLogin(data)
 
      if (response.success === true) {
-      console.log(response);
       toast.success('Login Success');
       navigate('/user');
     } else {

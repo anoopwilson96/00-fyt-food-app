@@ -15,11 +15,31 @@ export const userLogin = async (data)=>{
      data,
      withCredentials: true,
      })
-  return response?.data ;
+  return response?.data;
   } catch (error) {
     console.log(error)
   }
 }
+
+
+
+//Signup user
+
+export const signUpUser = async (data)=>{
+  try {
+  const response = await axiosInstance({
+    url: "/user/add",
+    method: "POST",
+    data,
+    withCredentials: true
+  })
+  console.log(response)
+  return response?.data ; 
+  } catch (error) {
+   console.log(error,"Failed request to sign up") 
+  }
+}
+
 
 
 
@@ -52,7 +72,7 @@ export const fetchUser = async ()=>{
       method: "GET",
       withCredentials: true 
     })
- // console.log(response,"====response")
+ console.log(response,"====response")
   return response?.data?.data;
   } catch (error) {
     console.log("Error fetching user data")

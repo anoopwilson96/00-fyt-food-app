@@ -23,7 +23,7 @@ const fetchUser = async ()=>{
       method: "GET",
       withCredentials: true 
     })
- // console.log(response,"====response")
+ console.log(response,"====response")
   setUser(response?.data?.data)
   } catch (error) {
     console.log("Error fetching profile pic")

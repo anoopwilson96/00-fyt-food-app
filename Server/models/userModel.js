@@ -20,8 +20,7 @@ const userSchema = new Schema({
   },
   mobile: { 
     type: Number,
-    maxLength: 10,
-    required: true
+    maxLength: 10
 },
 image: {
   type: String,
