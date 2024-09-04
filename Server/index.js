@@ -9,7 +9,10 @@ import cookieParser from 'cookie-parser';
 const app = express()
 
 app.use(cors({
- origin: true,  
+  origin: [
+    "https://00-fyt-food-app.vercel.app",
+    "http://localhost:5177"
+  ],
  credentials: true
 }))
 app.use(express.json())
