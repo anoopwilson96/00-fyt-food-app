@@ -25,7 +25,12 @@ export  const addUser = async (req, res, next) => {
 
   const token = generateUserToken(email)
 
-  res.cookie('token',token)
+  res.cookie('token',token,{
+    sameSite: 'None',
+    secure: true,
+    httpOnly: true,
+    path: '/'
+  })
   res.json({success:true,message:'user created successfully'})
 
 
@@ -57,7 +62,12 @@ export  const userLogin = async (req, res, next) => {
   const token = generateUserToken(email);
 
 
-  res.cookie('token',token)
+  res.cookie('token',token,{
+    sameSite: 'None',
+    secure: true,
+    httpOnly: true,
+    path: '/'
+  })
   res.status(200).json({success:true,message:'user logged in successfully'})
 
     
