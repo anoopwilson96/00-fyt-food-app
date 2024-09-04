@@ -22,7 +22,7 @@ const [user, setUser] = useState();
     } catch (error) {
       toast.error('Login To Continue')
       navigate('/login')
-      console.log(error)
+      console.log(error,"======error")
       
     }
 
