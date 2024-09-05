@@ -47,23 +47,23 @@ export const MenuItem = () => {
 
 
    { restaurants.map((value)=>(       
-    <div className="card  bg-base-100 shadow-lg max-h-96 max-w-96 sm:max-h-72 sm:max-w-72">
+    <div className="card  bg-base-100 shadow-lg max-h-96 max-w-96 sm:max-h-80 sm:max-w-80 md:max-h-80 md:max-w-80">
               <Link to={`restaurant/${value?._id}`} >
               <img className=" rounded-t-lg object-contain" src={value?.image} alt="Restaurant 2" /> </Link>
               
               <div className="p-4">
                 <div className='flex flex-row justify-evenly items-center'>
                 <Link to={`restaurant/${value?._id}`} >
-                <h3 className="text-lg text-nowrap font-semibold ">{value?.name} </h3> </Link>
+                <h3 className="text-lg text-wrap font-semibold ">{value?.name} </h3> </Link>
                 
                 <StarRating stars={value?.rating} />
                 </div>
 
                 
-                <div className="flex align-middle justify-between mt-2">
+                <div className="flex align-middle justify-between gap-3 mt-3">
                   
-                  <p className='flex text-wrap items-center flex-row gap-1'> <MdDeliveryDining size={30}  />  Free Delivery</p>
-                  <p className='flex text-wrap items-center flex-row gap-1' ><MdLocalOffer size={20} />  Explore Offers </p>                 
+                  <p className='flex sm:text-wrap md:text-wrap  lg:text-nowrap  items-center flex-row '> <MdDeliveryDining size={30}  />  Free Delivery</p>
+                  <p className='flex sm:text-wrap md:text-wrap  lg:text-nowrap  items-center flex-row ' ><MdLocalOffer size={20} />  Explore Offers </p>                 
                 </div>
               </div>
             </div>

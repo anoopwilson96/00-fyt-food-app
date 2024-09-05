@@ -23,7 +23,6 @@ const fetchUser = async ()=>{
       method: "GET",
       withCredentials: true 
     })
- console.log(response,"====response")
   setUser(response?.data?.data)
   } catch (error) {
     console.log("Error fetching profile pic")
@@ -132,8 +131,25 @@ useEffect(()=>{
   </div>
 
 </div>
+{/* // Bootstrap style */}
+<div className="header3 d-flex d-md-none justify-content-center py-3 mx-auto gap-3">
+  <div className="form-group">
+    <input
+      type="text"
+      placeholder="Search"
+      className="form-control w-50 w-md-75"
+    />
+  </div>
 
-<div className='header3  md:hidden flex flex-row justify-center py-5 mx-auto gap-5'>
+  <select className="form-select w-auto" defaultValue="">
+     <option disabled>Choose location</option>
+     <option>Whistler</option>
+     <option>Vancouver</option>
+     <option>Burnaby</option>
+  </select>
+
+</div>
+{/* <div className='header3  md:hidden flex flex-row justify-center py-5 mx-auto gap-5'>
 <div className="form-control">
     <input
       type="text"
@@ -148,9 +164,12 @@ useEffect(()=>{
      <option>Vancouver</option>
      <option>Burnaby</option>
   </select>
-</div>
-
+</div> */}
 </main>
 
   );
 };
+
+
+
+
