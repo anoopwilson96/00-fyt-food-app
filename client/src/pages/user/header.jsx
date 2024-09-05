@@ -132,7 +132,7 @@ useEffect(()=>{
 
 </div>
 {/* // Bootstrap style */}
-<div className="header3 d-flex d-md-none justify-content-center py-3 mx-auto gap-3">
+{/* <div className="header3 d-flex d-md-none justify-content-center py-3 mx-auto gap-3">
   <div className="form-group">
     <input
       type="text"
@@ -148,8 +148,8 @@ useEffect(()=>{
      <option>Burnaby</option>
   </select>
 
-</div>
-{/* <div className='header3  md:hidden flex flex-row justify-center py-5 mx-auto gap-5'>
+</div> */}
+<div className='header3  md:hidden flex flex-row justify-center py-5 mx-auto gap-5'>
 <div className="form-control">
     <input
       type="text"
@@ -164,7 +164,7 @@ useEffect(()=>{
      <option>Vancouver</option>
      <option>Burnaby</option>
   </select>
-</div> */}
+</div>
 </main>
 
   );

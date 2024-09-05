@@ -16,7 +16,7 @@ export const DishesCard = ({dish}) => {
   return (
     <div className=" mx-auto bg-white shadow-lg rounded-lg overflow-hidden sm:flex sm:flex-col md:flex-col max-w-full">
       <img
-        className="w-full h-48 object-cover "
+        className="w-96 h-48 object-cover "
         src={dish?.image}
         alt={dish?.name}
       />
