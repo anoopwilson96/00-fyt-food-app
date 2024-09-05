@@ -1,6 +1,7 @@
 import { cloudinaryInstance } from "../config/cloudinaryConfig.js";
 import { Restaurant } from "../models/restaurantModel.js";
 import { imageUploadCloudinary } from "../utils/cloudinaryUpload.js";
+import {Dish} from "../models/dishModel.js"
 import multer from "multer";
 
 export const addRestaurant = async (req, res, next) => {
@@ -43,7 +44,7 @@ export const addRestaurant = async (req, res, next) => {
 
 export const getAllRestaurants = async (req, res, next) => {
   try {
-    const restaurants = await Restaurant.find().populate('menuItems');
+    const restaurants = await Restaurant.find();
     res.status(200).json({ success: true, data: restaurants });
   } catch (error) {
     console.error(error); // Log the error for debugging purposes
@@ -51,10 +52,21 @@ export const getAllRestaurants = async (req, res, next) => {
   }
 };
 
+
+
 export const getRestaurant = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const restaurant = await Restaurant.findById(id).populate('menuItems');
+
+    // Find the restaurant by ID and populate menuItems and their associated dishes
+    const restaurant = await Restaurant.findById(id)
+      .populate({
+        path: 'menuItems',
+        populate: {
+          path: 'dish',
+          model: 'Dish',  // Make sure the correct model name is used here
+        },
+      });
 
     if (!restaurant) {
       return res.status(404).json({ success: false, message: "Restaurant not found" });
@@ -66,6 +78,16 @@ export const getRestaurant = async (req, res, next) => {
     res.status(error.status || 500).json({ message: error.message || "Internal server error" });
   }
 };
+
+
+
+
+
+
+
+
+
+
 
 
 export const deleteRestaurant = async (req, res, next) => {

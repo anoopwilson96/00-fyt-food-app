@@ -41,9 +41,9 @@ export const getMenuItem = async (req, res, next) => {
   try {
     const { id } = req.params;
    
-    const menuItem = await MenuItem.findById(id)
-      .populate('restaurant')
-      .populate('dish');
+    const menuItem = await MenuItem.findById(id).populate('restaurant')
+      // .populate('restaurant')
+      // .populate('dish');
 
     if (!menuItem) {
       return res.status(404).json({ success: false, message: "Menu Item not found" });
@@ -60,7 +60,7 @@ export const getMenuItem = async (req, res, next) => {
 // Get All Menu Items
 export const getAllMenuItems = async (req, res, next) => {
   try {
-    const menuItems = await MenuItem.find()
+    const menuItems = await MenuItem.find();
       // .populate('restaurant')
       // .populate('dish');
 
@@ -94,7 +94,7 @@ export const updateMenuItem = async (req, res, next) => {
 
     // Validate that restaurant and dish are arrays, if provided
     const updatedRestaurant = Array.isArray(restaurant) ? restaurant : existingMenuItem.restaurant;
-    const updatedDish = Array.isArray(dish) ? dish : existingMenuItem.dish;
+    const updatedDish = Array.isArray(dish) ? dish : [dish].filter(Boolean); // Ensure dish is an array
 
     // Push new IDs to existing arrays
     const newRestaurantIds = new Set([...existingMenuItem.restaurant, ...updatedRestaurant]);
