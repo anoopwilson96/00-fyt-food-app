@@ -17,7 +17,7 @@ export const CartPage = () => {
         });
         setCartDetails(response?.data);
         setCartItems(response?.data?.cart?.items || []); 
-        console.log(cartItems)
+        console.log(response)
       } catch (error) {
         toast.error("Failed to load cart: Try later");
         console.log(error);
@@ -90,6 +90,7 @@ export const CartPage = () => {
 
       {/* Cart Items */}
       <div className="w-full md:w-2/3 bg-white rounded-lg shadow-lg p-4">
+      <h3 className='font-bold'> {cartDetails?.cart.restaurant.name} </h3>
         {cartItems.length > 0 ? (
           cartItems.map((item) => (
             <div
@@ -98,7 +99,7 @@ export const CartPage = () => {
             >
               <div className="flex items-center space-x-4">
                 <p className="text-lg font-semibold">{item.dish.name}</p>
-                <p className="text-sm text-gray-500">${item.price.toFixed(2)}</p>
+                <p className="text-sm text-gray-500">₹ {item.price.toFixed(2)}</p>
               </div>
               <div className="flex items-center space-x-4">
                 {/* Decrease quantity */}
@@ -137,19 +138,19 @@ export const CartPage = () => {
           <div className="flex justify-between">
             <p className="text-lg font-semibold">Subtotal</p>
             <p className="text-lg">
-              ${cartDetails?.cart?.subtotal ? cartDetails.cart.subtotal.toFixed(2) : "0.00"}
+            ₹ {cartDetails?.cart?.subtotal ? cartDetails.cart.subtotal.toFixed(2) : "0.00"}
             </p>
           </div>
           <div className="flex justify-between">
             <p className="text-sm text-gray-500">GST + HST (10%)</p>
             <p className="text-sm text-gray-500">
-              ${cartDetails?.cart?.tax ? cartDetails.cart.tax.toFixed(2) : "0.00"}
+              ₹ {cartDetails?.cart?.tax ? cartDetails.cart.tax.toFixed(2) : "0.00"}
             </p>
           </div>
           <div className="flex justify-between font-bold mt-2">
             <p className="text-xl">Total</p>
             <p className="text-xl">
-              ${cartDetails?.cart?.total ? cartDetails.cart.total.toFixed(2) : "0.00"}
+              ₹ {cartDetails?.cart?.total ? cartDetails.cart.total.toFixed(2) : "0.00"}
             </p>
           </div>
           <button
