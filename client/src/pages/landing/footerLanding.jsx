@@ -17,25 +17,26 @@ export const FooterLanding = () => {
           </p>
         </aside>
         <nav>
-          <h6 className="footer-title">Services</h6>
-          <a className="link link-hover">Branding</a>
-          <a className="link link-hover">Design</a>
-          <a className="link link-hover">Marketing</a>
-          <a className="link link-hover">Advertisement</a>
-        </nav>
-        <nav>
-          <h6 className="footer-title">Company</h6>
-          <a className="link link-hover">About us</a>
-          <a className="link link-hover">Contact</a>
-          <a className="link link-hover">Jobs</a>
-          <a className="link link-hover">Press kit</a>
-        </nav>
-        <nav>
-          <h6 className="footer-title">Legal</h6>
-          <a className="link link-hover">Terms of use</a>
-          <a className="link link-hover">Privacy policy</a>
-          <a className="link link-hover">Cookie policy</a>
-        </nav>
+  <h6 className="footer-title">Services</h6>
+  <a className="link link-hover">Food Delivery</a>
+  <a className="link link-hover">Restaurant Partnerships</a>
+  <a className="link link-hover">Corporate Orders</a>
+  <a className="link link-hover">Special Offers</a>
+</nav>
+<nav>
+  <h6 className="footer-title">Company</h6>
+  <a className="link link-hover">About FYT</a>
+  <a className="link link-hover">Contact Us</a>
+  <a className="link link-hover">Careers</a>
+  <a className="link link-hover">News & Press</a>
+</nav>
+<nav>
+  <h6 className="footer-title">Legal</h6>
+  <a className="link link-hover">Terms of Service</a>
+  <a className="link link-hover">Privacy Policy</a>
+  <a className="link link-hover">Refund Policy</a>
+</nav>
+
       </footer>
     </>
   )
