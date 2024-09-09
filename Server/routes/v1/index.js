@@ -5,6 +5,7 @@ import menuItemRoute from './menuItemRoute.js'
 import restaurantRoute from './restaurantRoute.js'
 import adminRoute from './adminRoute.js'
 import cartRoute from './cartRoute.js'
+import razorpayRoute from '../v1/razorpayRoute.js'
 
 const v1Router = express.Router()
 
@@ -14,6 +15,7 @@ v1Router.use('/menu-item',menuItemRoute)
 v1Router.use('/restaurant',restaurantRoute)
 v1Router.use('/manage',adminRoute)
 v1Router.use('/cart',cartRoute)
+v1Router.use('/payment',razorpayRoute)
 
 
 export default v1Router 
