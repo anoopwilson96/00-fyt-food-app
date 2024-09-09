@@ -25,25 +25,25 @@ export const DishesCard = ({ dish, restaurantId }) => {
       const currentCart = cartResponse.data.cart;
 
       // Check if the cart exists and if it's from a different restaurant
-      if (currentCart && currentCart.restaurant && currentCart.restaurant !== restaurantId) {
+      if (currentCart && currentCart.restaurant && currentCart.restaurant._id !== restaurantId) {
         // Warn the user and ask for confirmation
         const confirmClear = window.confirm(
-          'Another Restaurant items in cart.Continuing will empty those items. Proceed? '
+          'Another Restaurant items in cart.Continuing will empty those items. Proceed?'
         );
-
+      
         if (!confirmClear) {
-        navigate(`/user/restaurant/${currentCart.restaurant}`)
+          // Assuming currentCart.restaurant is an object with an _id field
+          navigate(`/user/restaurant/${currentCart.restaurant._id}`);
           return; // Exit if the user cancels
         }
       }
-
+      
       // Prepare data to send to the backend
       const data = {
         dishId: dish._id,
         quantity: quantity,
         restaurantId: restaurantId
       };
-
       // Add to cart request
       const response = await axiosInstance.post('/cart/add', data, { withCredentials: true });
 
