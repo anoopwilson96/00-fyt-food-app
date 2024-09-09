@@ -9,6 +9,10 @@ const cartSchema = new Schema({
         ref: 'User',
         required: true
     },
+    restaurant: {
+        type: Schema.Types.ObjectId,
+        ref: 'Restaurant'
+    },
     items: [
         {
             dish: {
@@ -63,13 +67,10 @@ const cartSchema = new Schema({
 // Pre-save hook to calculate subtotal, tax, and total
 cartSchema.pre('save', function (next) {
     this.subtotal = this.items.reduce((sum, item) => sum + item.price * item.quantity, 0);
-    this.tax = this.subtotal * 0.1; // Assuming 10% tax rate
+    this.tax = this.subtotal * 0.1; // Assuming a 10% tax rate
     this.total = this.subtotal + this.tax;
-    this.updatedAt = Date.now();
+    this.updatedAt = Date.now(); // Update the last modification date
     next();
 });
-
-
-
 
 export const Cart = mongoose.model('Cart', cartSchema);

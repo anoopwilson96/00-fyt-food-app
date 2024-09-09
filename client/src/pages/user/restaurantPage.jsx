@@ -16,6 +16,7 @@ export const RestaurantPage = () => {
       try {
         const response = await getOneRestaurant(id);
         setRestaurant(response);
+        console.log(response)
       } catch (error) {
         console.log(error, "=== Failed to fetch");
         toast.error("Error in loading data");
@@ -28,7 +29,7 @@ export const RestaurantPage = () => {
   return (
     <main className='bg-gray-50'>
       {/* <Link to={"/user"} ><IoArrowBackCircleOutline size={30} /></Link> */}
-
+     
       <section className="grid lg:grid-cols-2 grid-cols-1 max-w-7xl mx-auto gap-8 p-6 bg-gray-50">
         <div className="card bg-base-100 shadow-lg rounded-lg overflow-hidden">
           <figure className="flex justify-center items-center bg-green-50 p-2">
@@ -61,10 +62,12 @@ export const RestaurantPage = () => {
       <section className="section1 flex-1 p-10 max-w-7xl mx-auto grid sm:grid-cols-2 lg:grid-cols-4 grid-cols-1 md:grid-cols-3 gap-5">
         {restaurant?.menuItems?.map((menuItem) =>
           menuItem.dish.map((dish) => (
-            <DishesCard key={dish._id} dish={dish} />
+
+            <DishesCard key={dish._id} restaurantId={restaurant._id} dish={dish} />
           ))
         )}
       </section>
     </main>
   );
 };
+

@@ -22,15 +22,15 @@ export  const addUser = async (req, res, next) => {
 
   const newUser = new User({name,email,password:hashedPassword,mobile,profilePic,location})
   await newUser.save()
-
-  const token = generateUserToken(email)
-
+const userId = newUser._id
+  const token = generateUserToken(email,userId)
   res.cookie('token',token,{
     sameSite: 'None',
     secure: true,
     httpOnly: true,
     path: '/',
-    maxAge: 2 * 60 * 60 * 1000 // 2 hours in milliseconds
+    maxAge: 2 * 60 * 60 * 1000, // 2 hours in milliseconds
+    
   })
   res.json({success:true,message:'user created successfully'})
 
@@ -49,6 +49,7 @@ export  const userLogin = async (req, res, next) => {
   }
 
   const userExist = await User.findOne({ email });
+ 
 
   if (!userExist) {
       return res.status(404).json({ success: false, message: "user does not exist" });
@@ -59,9 +60,8 @@ export  const userLogin = async (req, res, next) => {
   if (!passwordMatch) {
       return res.status(400).json({ success: false, message: "user not authenticated" });
   }
-
-  const token = generateUserToken(email);
-
+  const userId = userExist._id
+  const token = generateUserToken(email,userId);
 
   res.cookie('token',token,{
     sameSite: 'None',
