@@ -15,6 +15,7 @@ import { UserAuth } from './protected routes/UserAuth.jsx';
 import { Profile } from './pages/user/profile.jsx';
 import { MenuItem } from './pages/user/menuItem.jsx';
 import { RestaurantPage } from './pages/user/restaurantPage.jsx';
+import { OrderHistoryPage } from './pages/user/OrdersHistoryPage.jsx';
 
 
 
@@ -57,6 +58,10 @@ const router = createBrowserRouter([
         path:"my-profile",
         element: <Profile/>
 
+      },
+      {
+        path: "order-history",
+        element:<OrderHistoryPage/>
       },
       {
         path:"menu-item/:id",
