@@ -17,26 +17,30 @@ export const CartPage = () => {
         });
         setCartDetails(response?.data);
         setCartItems(response?.data?.cart?.items || []); 
-        console.log(response)
+        console.log(response);
       } catch (error) {
         toast.error("Failed to load cart: Try later");
         console.log(error);
       }
     };
-  
+
     fetchCartItems();
   }, []); 
-  
-  const finalCheckout = async () => {
+
+  // Function to update the cart in the backend
+  const updateCartOnServer = async (updatedItems) => {
     try {
-      const response = await axiosInstance({
-        url: "cart/checkout",
-        method: "POST", // Ensure this method is correct
+      await axiosInstance({
+        url: '/cart/update', // Create this route on the backend
+        method: 'PUT',
+        data: {
+          items: updatedItems
+        },
         withCredentials: true,
       });
-      console.log(response.data);
+      console.log("Cart updated successfully on server.");
     } catch (error) {
-      toast.error("Checkout Failed: Try later");
+      toast.error("Failed to update cart: Try later");
       console.log(error);
     }
   };
@@ -45,7 +49,7 @@ export const CartPage = () => {
     const subtotal = updatedItems.reduce((acc, item) => acc + (item.dish.price * item.quantity), 0);
     const tax = subtotal * 0.1; // Assuming a 10% tax rate
     const total = subtotal + tax;
-  
+
     setCartDetails({
       ...cartDetails,
       cart: {
@@ -56,18 +60,19 @@ export const CartPage = () => {
       }
     });
   };
-  
+
   // Update quantity increase function
-  const increaseQuantity = (id) => {
+  const increaseQuantity = async (id) => {
     const updatedItems = cartItems.map((item) =>
       item._id === id ? { ...item, quantity: item.quantity + 1 } : item
     );
     setCartItems(updatedItems);
     calculateTotals(updatedItems); // Recalculate totals when quantity changes
+    await updateCartOnServer(updatedItems); // Sync with the backend
   };
-  
+
   // Update quantity decrease function
-  const decreaseQuantity = (id) => {
+  const decreaseQuantity = async (id) => {
     const updatedItems = cartItems.map((item) =>
       item._id === id && item.quantity > 1
         ? { ...item, quantity: item.quantity - 1 }
@@ -75,28 +80,49 @@ export const CartPage = () => {
     );
     setCartItems(updatedItems);
     calculateTotals(updatedItems); // Recalculate totals when quantity changes
+    await updateCartOnServer(updatedItems); // Sync with the backend
   };
-  
+
   // Update remove item function
-  const removeItem = (id) => {
+  const removeItem = async (id) => {
     const updatedItems = cartItems.filter((item) => item._id !== id);
     setCartItems(updatedItems);
     calculateTotals(updatedItems); // Recalculate totals when an item is removed
+    await updateCartOnServer(updatedItems); // Sync with the backend
   };
 
+  // CHECKOUT AFTER UPDATE
+  const checkout = async () => {
+    try {
+      // Ensure the cart is updated with the latest data
+      await updateCartOnServer(cartItems);
 
+      // Proceed with the checkout API call
+      const response = await axiosInstance({
+        url: '/cart/checkout',
+        method: "POST",
+        withCredentials: true
+      });
 
+      if (response.status === 200) {
+        toast.success("Checkout successful!");
+        console.log('Checkout successful:', response.data);
+      } else {
+        toast.error("Checkout failed");
+        console.error('Checkout failed:', response.data.message);
+      }
+    } catch (error) {
+      toast.error("Error during checkout: Try later");
+      console.error('Error during checkout:', error);
+    }
+  };
 
-
-
-  
   return (
     <div className="flex flex-col items-center justify-center p-4 md:p-10">
       <h1 className="text-3xl font-bold mb-8">Your Cart</h1>
 
       {/* Cart Items */}
       <div className="w-full md:w-2/3 bg-white rounded-lg shadow-lg p-4">
-      <h3 className='font-bold'> {cartDetails?.cart.restaurant.name} </h3>
         {cartItems.length > 0 ? (
           cartItems.map((item) => (
             <div
@@ -105,7 +131,7 @@ export const CartPage = () => {
             >
               <div className="flex items-center space-x-4">
                 <p className="text-lg font-semibold">{item.dish.name}</p>
-                <p className="text-sm text-gray-500">₹ {item.price.toFixed(2)}</p>
+                <p className="text-sm text-gray-500">₹ {item.dish.price.toFixed(2)}</p>
               </div>
               <div className="flex items-center space-x-4">
                 {/* Decrease quantity */}
@@ -144,7 +170,7 @@ export const CartPage = () => {
           <div className="flex justify-between">
             <p className="text-lg font-semibold">Subtotal</p>
             <p className="text-lg">
-            ₹ {cartDetails?.cart?.subtotal ? cartDetails.cart.subtotal.toFixed(2) : "0.00"}
+              ₹ {cartDetails?.cart?.subtotal ? cartDetails.cart.subtotal.toFixed(2) : "0.00"}
             </p>
           </div>
           <div className="flex justify-between">
@@ -161,7 +187,7 @@ export const CartPage = () => {
           </div>
           <button
             className="w-full bg-blue-600 text-white py-3 rounded-lg mt-4 hover:bg-blue-700"
-            onClick={finalCheckout}
+            onClick={checkout}
           >
             Proceed to Checkout
           </button>

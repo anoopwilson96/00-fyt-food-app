@@ -112,6 +112,37 @@ export const getCart = async (req, res, next) => {
 
 
 
+// Update Cart 
+
+export const updateCart = async (req, res) => {
+  try {
+    const userId = req.user.userId;  // Assuming you're using a middleware to authenticate users
+    const { items } = req.body; // Frontend will send updated items
+
+    // Find the user's active cart
+    const cart = await Cart.findOne({ user: userId, status: 'active' });
+
+    if (!cart) {
+      return res.status(404).json({ success: false, message: 'Cart not found' });
+    }
+
+    // Update the cart's items
+    cart.items = items;
+
+    // Recalculate subtotal, tax, and total
+    cart.subtotal = items.reduce((acc, item) => acc + (item.price * item.quantity), 0);
+    cart.tax = cart.subtotal * 0.1; // Assuming a 10% tax rate
+    cart.total = cart.subtotal + cart.tax;
+
+    // Save the updated cart
+    await cart.save();
+
+    res.status(200).json({ success: true, message: 'Cart updated successfully', cart });
+  } catch (error) {
+    console.error('Error updating cart:', error);
+    res.status(500).json({ success: false, message: 'Internal server error' });
+  }
+};
 
 
 
