@@ -84,6 +84,12 @@ export const CartPage = () => {
     calculateTotals(updatedItems); // Recalculate totals when an item is removed
   };
 
+
+
+
+
+
+  
   return (
     <div className="flex flex-col items-center justify-center p-4 md:p-10">
       <h1 className="text-3xl font-bold mb-8">Your Cart</h1>
