@@ -91,19 +91,79 @@ export const CartPage = () => {
     await updateCartOnServer(updatedItems); // Sync with the backend
   };
 
-  // CHECKOUT AFTER UPDATE
+
+  const handlePayment = async () => {
+    try {
+      // Create Razorpay order on the backend
+      const orderResponse = await axiosInstance({
+        url: '/payment/create-order',
+        method: "POST",
+        data: { amount: cartDetails?.cart?.total }, // Send the amount to create an order
+        withCredentials: true,
+      });
+  
+      const { id: order_id, amount, currency } = orderResponse.data;
+  
+      const options = {
+        key: import.meta.env.VITE_RAZORPAY_KEY_ID, // Razorpay key
+        amount: amount.toString(),
+        currency: currency,
+        name: "Fill Your Tummy",
+        description: "Your food order payment",
+        order_id: order_id, // Razorpay order ID
+        handler: async function (response) {
+          const { razorpay_payment_id, razorpay_order_id, razorpay_signature } = response;
+  
+          // Send payment details to the backend to verify the payment
+          try {
+            const verifyResponse = await axiosInstance.post("/payment/verify-payment", {
+              payment_id: razorpay_payment_id,
+              order_id: razorpay_order_id,
+              signature: razorpay_signature,
+            });
+  
+            if (verifyResponse.data.status === "success") {
+              toast.success("Payment successful!");
+              // Now proceed to checkout
+              await checkout(); // Ensure the checkout only happens after payment success
+            } else {
+              toast.error("Payment verification failed.");
+            }
+          } catch (error) {
+            toast.error("Payment verification error");
+            console.error("Payment verification error:", error);
+          }
+        },
+        prefill: {
+          name: "Your Name",
+          email: "yourname@example.com",
+          contact: "9999999999",
+        },
+        theme: {
+          color: "#3399cc",
+        },
+      };
+  
+      const rzp = new window.Razorpay(options);
+      rzp.open();
+    } catch (error) {
+      toast.error("Payment error: Try later");
+      console.error("Payment error:", error);
+    }
+  };
+  
   const checkout = async () => {
     try {
       // Ensure the cart is updated with the latest data
       await updateCartOnServer(cartItems);
-
+  
       // Proceed with the checkout API call
       const response = await axiosInstance({
         url: '/cart/checkout',
         method: "POST",
-        withCredentials: true
+        withCredentials: true,
       });
-
+  
       if (response.status === 200) {
         toast.success("Checkout successful!");
         console.log('Checkout successful:', response.data);
@@ -116,6 +176,8 @@ export const CartPage = () => {
       console.error('Error during checkout:', error);
     }
   };
+  
+  
 
   return (
     <div className="flex flex-col items-center justify-center p-4 md:p-10">
@@ -187,7 +249,7 @@ export const CartPage = () => {
           </div>
           <button
             className="w-full bg-blue-600 text-white py-3 rounded-lg mt-4 hover:bg-blue-700"
-            onClick={checkout}
+            onClick={handlePayment}
           >
             Proceed to Checkout
           </button>
