@@ -1,7 +1,21 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 export const OrderHistoryPage = () => {
-  // Dummy order data
+ 
+
+const [history,setHistory] = useState();
+
+useEffect(()=>{
+  const getHistory = ()=>{
+    try {
+      console.log("Hello")
+    } catch (error) {
+      console.log(error,"failed to fetch")
+    }
+  }
+},[])
+
+
   const orders = [
     {
       orderId: "12345",
@@ -28,6 +42,7 @@ export const OrderHistoryPage = () => {
       orderDate: "2023-09-05",
     },
   ];
+
 
   // Function to handle rebooking an order
   const handleRebook = (orderId) => {

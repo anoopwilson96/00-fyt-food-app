@@ -2,10 +2,12 @@ import React, { useEffect, useState } from 'react';
 import { AiOutlinePlus, AiOutlineMinus, AiOutlineDelete } from 'react-icons/ai';
 import { axiosInstance } from '../../config/axiosInstance';
 import toast from 'react-hot-toast';
+import { useNavigate } from 'react-router-dom';
 
 export const CartPage = () => {
   const [cartItems, setCartItems] = useState([]); 
   const [cartDetails, setCartDetails] = useState();
+  const navigate = useNavigate()
 
   useEffect(() => {
     const fetchCartItems = async () => {
@@ -175,6 +177,7 @@ export const CartPage = () => {
       toast.error("Error during checkout: Try later");
       console.error('Error during checkout:', error);
     }
+    navigate('/user/order-history')
   };
   
   

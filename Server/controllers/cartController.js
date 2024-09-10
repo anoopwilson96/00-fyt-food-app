@@ -22,10 +22,13 @@ export const addToCart = async (req, res, next) => {
     // Check if the dish's restaurant matches the current cart's restaurant
     if (cart && cart.restaurant && !cart.restaurant.equals(restaurantId)) {
       // Clear the cart if it's from a different restaurant
+      
       cart.items = [];
       cart.status = null;
       cart.restaurant = null;
       await cart.save();
+      Cart.findOne({ user: userId, status: 'null' });
+      
     }
 
     // If no cart exists or cleared, create a new one

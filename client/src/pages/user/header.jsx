@@ -92,7 +92,7 @@ export const Header = () => {
               <span className="text-slate-800 font-medium">Subtotal: $999</span>
               <div className="card-actions">
                 <Link to={'/user/cart'}>
-                  <button className="btn btn-primary btn-block">View cart</button>
+                  <button className="btn btn-primary text-white btn-block">View cart</button>
                 </Link>
               </div>
             </div>
