@@ -22,13 +22,10 @@ export const addToCart = async (req, res, next) => {
     // Check if the dish's restaurant matches the current cart's restaurant
     if (cart && cart.restaurant && !cart.restaurant.equals(restaurantId)) {
       // Clear the cart if it's from a different restaurant
-      
       cart.items = [];
       cart.status = null;
       cart.restaurant = null;
       await cart.save();
-      Cart.findOne({ user: userId, status: 'null' });
-      
     }
 
     // If no cart exists or cleared, create a new one
@@ -63,23 +60,26 @@ export const addToCart = async (req, res, next) => {
 
 
 
-//Get ACTIVE carts
-
 export const getActiveCart = async (req, res, next) => {
   try {
     const userId = req.user.userId;
 
-    // Find the active cart for the user
-    const cart = await Cart.findOne({ user: userId, status: 'active' }).populate('restaurant').populate('items.dish')
+    // Step 1: Delete any carts with status 'null' for the user
+    await Cart.deleteMany({ user: userId, status: 'null' });
 
+    // Step 2: Find the active cart for the user
+    const cart = await Cart.findOne({ user: userId, status: 'active' })
+      .populate('restaurant')
+      .populate('items.dish');
 
     if (!cart) {
       return res.status(200).json({ 
         success: true, 
         message: 'No active cart found', 
-        });
+      });
     }
 
+    // Step 3: Return the active cart
     res.status(200).json({ success: true, cart });
   } catch (error) {
     console.error(error);
@@ -91,14 +91,13 @@ export const getActiveCart = async (req, res, next) => {
 
 
 
-
 // View All Carts
 
 export const getCart = async (req, res, next) => {
   try {
     const userId = req.user.userId;
 
-    const cart = await Cart.find({ user: userId}).populate('items.dish')
+    const cart = await (await Cart.find({ user: userId}).populate('items.dish').populate('restaurant'))
    
 
     if (!cart) {
