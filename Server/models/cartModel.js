@@ -48,7 +48,7 @@ const cartSchema = new Schema({
     },
     status: {
         type: String,
-        enum: ['active', 'ordered', 'cancelled'],
+        enum: ['active', 'ordered', 'cancelled', 'null'],
         default: 'active'
     },
     stripePaymentIntentId: {
