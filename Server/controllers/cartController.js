@@ -98,7 +98,8 @@ export const getCart = async (req, res, next) => {
     const userId = req.user.userId;
 
     const cart = await (await Cart.find({ user: userId}).populate('items.dish').populate('restaurant'))
-   
+       // Step 1: Delete any carts with status 'null' for the user
+       await Cart.deleteMany({ user: userId, items:[] });
 
     if (!cart) {
       return res.status(404).json({ success: false, message: 'Your cart is empty' });
@@ -119,7 +120,7 @@ export const getCart = async (req, res, next) => {
 
 export const updateCart = async (req, res) => {
   try {
-    const userId = req.user.userId;  // Assuming you're using a middleware to authenticate users
+    const userId = req.user.userId;  
     const { items } = req.body; // Frontend will send updated items
 
     // Find the user's active cart
@@ -175,3 +176,54 @@ export const checkoutCart = async (req, res, next) => {
 };
 
 
+// cart status CANCEL
+
+export const cancelStatus = async (req, res,next) => {
+  try {
+    const orderId = req.params.orderId;
+    const userId = req.user.userId;
+
+    // Find the cart by orderId and update the status to 'cancelled'
+
+    const updatedCart = await Cart.findOneAndUpdate(
+      { _id: orderId, user: userId, status: 'ordered' },
+      { status: 'cancelled' },
+      { new: true }
+    );
+
+    if (!updatedCart) {
+      return res.status(404).json({ success: false, message: 'Order not found or already cancelled' });
+    }
+
+    res.status(200).json({ success: true, message: 'Order cancelled successfully', cart: updatedCart });
+  } catch (error) {
+    console.error('Error canceling order:', error);
+    res.status(500).json({ success: false, message: 'Internal server error' });
+  }
+};
+
+
+// cart status REORDER
+export const reOrder = async (req, res,next) => {
+  try {
+    const orderId = req.params.orderId;
+    const userId = req.user.userId;
+
+    // Find the cart by orderId and update the status to 'cancelled'
+
+    const updatedCart = await Cart.findOneAndUpdate(
+      { _id: orderId, user: userId, status:{ $in: ['cancelled', 'delivered'] } },
+      { status: 'ordered' },
+      { new: true }
+    );
+
+    if (!updatedCart) {
+      return res.status(404).json({ success: false, message: 'Order not found ' });
+    }
+
+    res.status(200).json({ success: true, message: 'Order placed successfully', cart: updatedCart });
+  } catch (error) {
+    console.error('Error in reorder:', error);
+    res.status(500).json({ success: false, message: 'Internal server error' });
+  }
+}; 

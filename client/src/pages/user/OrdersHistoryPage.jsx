@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { axiosInstance } from "../../config/axiosInstance";
+import { useNavigate } from "react-router-dom";
 
 export const OrderHistoryPage = () => {
   const [orders, setOrders] = useState([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const getHistory = async () => {
@@ -22,15 +24,54 @@ export const OrderHistoryPage = () => {
     getHistory();
   }, []);
 
-  const handleRebook = (orderId) => {
-    console.log(`Rebooking order ${orderId}`);
-    // Implement your rebooking logic here
+  const handleRebook = async (orderId) => {
+    try {
+      console.log(`Reordering ${orderId}`);
+      const response = await axiosInstance({
+     url: `/cart/reorder/${orderId}`,
+     method: 'PUT',
+     withCredentials: true 
+    });
+    
+      if (response.data.success) {
+        setOrders((prevOrders) =>
+          prevOrders.map((order) =>
+            order._id === orderId ? { ...order, status: "ordered" } : order
+          )
+        );
+      
+      } else {
+        console.log("Failed to  order");
+      }
+    } catch (error) {
+      console.error("Error canceling order:", error);
+    }
   };
 
-  const handleCancel = (orderId) => {
-    console.log(`Canceling order ${orderId}`);
-    // Implement your cancel order logic here
+
+  const handleCancel = async (orderId) => {
+    try {
+      console.log(`Canceling order ${orderId}`);
+      const response = await axiosInstance({
+     url: `/cart/cancel/${orderId}`,
+     method: 'PUT',
+     withCredentials: true 
+    });
+      
+      if (response.data.success) {
+        setOrders((prevOrders) =>
+          prevOrders.map((order) =>
+            order._id === orderId ? { ...order, status: "cancelled" } : order
+          )
+        );
+      } else {
+        console.log("Failed to cancel order");
+      }
+    } catch (error) {
+      console.error("Error canceling order:", error);
+    }
   };
+
 
   // Function to style the status based on its value
   const getStatusStyle = (status) => {

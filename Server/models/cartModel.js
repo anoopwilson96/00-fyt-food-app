@@ -51,7 +51,7 @@ const cartSchema = new Schema({
         enum: ['active', 'ordered', 'cancelled', 'null'],
         default: 'active'
     },
-    stripePaymentIntentId: {
+    PaymentId: {
         type: String
     },
     createdAt: {

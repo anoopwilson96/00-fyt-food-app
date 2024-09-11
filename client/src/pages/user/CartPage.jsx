@@ -94,7 +94,7 @@ export const CartPage = () => {
   };
 
 
-  const handlePayment = async () => {
+  const  handlePayment = async () => {
     try {
       // Create Razorpay order on the backend
       const orderResponse = await axiosInstance({
