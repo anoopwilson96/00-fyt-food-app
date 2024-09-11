@@ -64,10 +64,8 @@ export const getActiveCart = async (req, res, next) => {
   try {
     const userId = req.user.userId;
 
-    // Step 1: Delete any carts with status 'null' for the user
-    await Cart.deleteMany({ user: userId, status: 'null' });
 
-    // Step 2: Find the active cart for the user
+// Find the active cart for the user
     const cart = await Cart.findOne({ user: userId, status: 'active' })
       .populate('restaurant')
       .populate('items.dish');
@@ -97,9 +95,12 @@ export const getCart = async (req, res, next) => {
   try {
     const userId = req.user.userId;
 
-    const cart = await (await Cart.find({ user: userId}).populate('items.dish').populate('restaurant'))
+    const cart = await (await Cart.find({ user: userId, status: { $ne: null }}).populate('items.dish').populate('restaurant'))
        // Step 1: Delete any carts with status 'null' for the user
-       await Cart.deleteMany({ user: userId, items:[] });
+    const deleteNull =   await Cart.deleteMany({ user: userId, status: { $in: ['null',null ] } });
+    if (deleteNull){
+      console.log("deleted Null carts")
+    } else{console.log("Not deleted")}
 
     if (!cart) {
       return res.status(404).json({ success: false, message: 'Your cart is empty' });
