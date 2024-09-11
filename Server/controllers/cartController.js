@@ -204,26 +204,39 @@ export const cancelStatus = async (req, res,next) => {
 
 
 // cart status REORDER
-export const reOrder = async (req, res,next) => {
+
+export const reOrder = async (req, res, next) => {
   try {
     const orderId = req.params.orderId;
     const userId = req.user.userId;
 
-    // Find the cart by orderId and update the status to 'cancelled'
+    // Find the original order
+    const originalOrder = await Cart.findOne({
+      _id: orderId,
+      user: userId,
+      status: { $in: ['cancelled', 'delivered'] },
+    }).lean(); // Use .lean() to get a plain JavaScript object
 
-    const updatedCart = await Cart.findOneAndUpdate(
-      { _id: orderId, user: userId, status:{ $in: ['cancelled', 'delivered'] } },
-      { status: 'ordered' },
-      { new: true }
-    );
-
-    if (!updatedCart) {
-      return res.status(404).json({ success: false, message: 'Order not found ' });
+    if (!originalOrder) {
+      return res.status(404).json({ success: false, message: 'Order not found' });
     }
 
-    res.status(200).json({ success: true, message: 'Order placed successfully', cart: updatedCart });
+    // Remove unnecessary fields and reset status and timestamps
+    const { _id, status, createdAt, updatedAt, ...orderData } = originalOrder;
+
+    // Create a new order with the same items and restaurant
+    const newOrder = new Cart({
+      ...orderData,
+      status: 'active',
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    });
+
+    await newOrder.save();
+
+    res.status(200).json({ success: true, message: 'Order placed successfully', cart: newOrder });
   } catch (error) {
     console.error('Error in reorder:', error);
     res.status(500).json({ success: false, message: 'Internal server error' });
   }
-}; 
+};

@@ -9,5 +9,5 @@ router.post('/checkout',authUser,checkoutCart)
 router.get('/active',authUser,getActiveCart)
 router.put('/update',authUser,updateCart)
 router.put('/cancel/:orderId',authUser,cancelStatus)
-router.put('/reorder/:orderId',authUser,reOrder)
+router.post('/reorder/:orderId',authUser,reOrder)
 export default router

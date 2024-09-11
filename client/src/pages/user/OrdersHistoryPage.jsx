@@ -28,25 +28,23 @@ export const OrderHistoryPage = () => {
     try {
       console.log(`Reordering ${orderId}`);
       const response = await axiosInstance({
-     url: `/cart/reorder/${orderId}`,
-     method: 'PUT',
-     withCredentials: true 
-    });
-    
+        url: `/cart/reorder/${orderId}`,
+        method: 'POST', // Use POST if creating a new order
+        withCredentials: true,
+      });
+  
       if (response.data.success) {
-        setOrders((prevOrders) =>
-          prevOrders.map((order) =>
-            order._id === orderId ? { ...order, status: "ordered" } : order
-          )
-        );
-      
+        
+        console.log("Reordered")
+        navigate('/user/cart')
       } else {
-        console.log("Failed to  order");
+        console.log('Failed to reorder');
       }
     } catch (error) {
-      console.error("Error canceling order:", error);
+      console.error('Error reordering:', error);
     }
   };
+  
 
 
   const handleCancel = async (orderId) => {
