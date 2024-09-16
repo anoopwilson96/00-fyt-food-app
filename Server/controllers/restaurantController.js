@@ -3,6 +3,8 @@ import { Restaurant } from "../models/restaurantModel.js";
 import { imageUploadCloudinary } from "../utils/cloudinaryUpload.js";
 import {Dish} from "../models/dishModel.js"
 import multer from "multer";
+import mongoose from 'mongoose';
+
 
 export const addRestaurant = async (req, res, next) => {
   try {
@@ -92,9 +94,9 @@ export const getRestaurant = async (req, res, next) => {
 
 export const deleteRestaurant = async (req, res, next) => {
   try {
-    const { id } = req.params;
+    const { id } = req.body;
     const restaurant = await Restaurant.findByIdAndDelete(id);
-
+    console.log(id)
     if (!restaurant) {
       return res.status(404).json({ success: false, message: "Restaurant not found" });
     }
@@ -132,10 +134,17 @@ export const updateRestaurant = async (req, res, next) => {
     restaurant.rating = rating || restaurant.rating;
     restaurant.image = imageUrl || restaurant.image;
 
-    // Append new menu items if provided
+    // Handle menuItems
     if (Array.isArray(menuItems)) {
-      restaurant.menuItems = Array.from(new Set([...restaurant.menuItems, ...menuItems]));
+      // Convert strings to ObjectId instances
+      const validMenuItems = menuItems
+        .map(item => mongoose.Types.ObjectId.isValid(item) ? mongoose.Types.ObjectId(item) : null)
+        .filter(item => item !== null);
+
+      // Merge and update menuItems
+      restaurant.menuItems = Array.from(new Set([...restaurant.menuItems, ...validMenuItems]));
     }
+
     // Save updated restaurant
     await restaurant.save();
 

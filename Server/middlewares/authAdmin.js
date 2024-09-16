@@ -5,11 +5,7 @@ import jwt from "jsonwebtoken";
 export const authAdmin = (req,res,next)=>{
   try {
     const {token,email,role} = req.cookies
-    console.log(req.cookies);
-    console.log(token.role,token.email);
-    console.log(role)
-    console.log(email);
-    
+
     
   
   

@@ -3,6 +3,7 @@
 import { axiosInstance } from "../config/axiosInstance"
 
 
+
 //Get All restaurants
 export const getAllRestaurants = async ()=>{
   try {
@@ -10,7 +11,7 @@ export const getAllRestaurants = async ()=>{
       url: "/restaurant/all" ,
       method:"GET"
     })
-  return response?.data?.data
+  return (response?.data?.data || [])
   } catch (error) {
    console.log(error,"failed to fetch");
 
@@ -28,5 +29,38 @@ export const getOneRestaurant = async (id)=>{
     return response?.data?.data
   } catch (error) {
     console.log(error,"=== Error in axios fetching restaurant")
+  }
+}
+
+
+// Add restaurant
+
+export const AddRestaurantAPI = async(data)=>{
+  try {
+    const response = await axiosInstance({
+      url: "/restaurant/add",
+      method: "POST",
+      data: data,
+      withCredentials: true
+    })
+    return response
+  } catch (error) {
+    console.log(error,"===axios failed")
+  }
+}
+
+// Edit restaurant
+
+export const updateRestaurantAPI = async (formData,id)=>{
+  try {
+    const response = await axiosInstance({
+      url: `/restaurant/update/${id}`,
+      method:"PATCH",
+      data: formData,
+      withCredentials:true
+    })
+    return response
+  } catch (error) {
+    console.log(error,"===axios error")
   }
 }

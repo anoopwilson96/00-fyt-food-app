@@ -10,7 +10,7 @@ export const addMenuItem = async (req, res, next) => {
   try {
     const {name, description, restaurant, dish, image } = req.body ;
 
-
+console.log (req.bdy)
     // Upload image to Cloudinary if provided
     const imageUrl = req.file ? await imageUploadCloudinary(req.file.path) : image;
 
@@ -22,6 +22,7 @@ export const addMenuItem = async (req, res, next) => {
       image: imageUrl || image
     });
 
+  
     await newMenuItem.save();
 
     res.status(201).json({ success: true, message: "Menu Item created successfully", data: newMenuItem });
@@ -82,6 +83,9 @@ export const updateMenuItem = async (req, res, next) => {
   try {
     const { id } = req.params;
     const { name, description, restaurant, dish, image } = req.body;
+    console.log(id)
+    console.log(req.body)
+    
 
     // Upload new image to Cloudinary if a file is provided
     const imageUrl = req.file ? await imageUploadCloudinary(req.file.path) : image;
@@ -119,6 +123,27 @@ export const updateMenuItem = async (req, res, next) => {
 
     res.status(200).json({ success: true, message: "Menu Item updated successfully", data: updatedMenuItem });
 
+  } catch (error) {
+    console.error(error); // Log the error for debugging purposes
+    res.status(error.status || 500).json({ message: error.message || "Internal server error" });
+  }
+};
+
+
+// Delete a Menu Item by ID
+export const deleteMenuItem = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    console.log(id)
+
+    // Find and delete the menu item by ID
+    const deletedMenuItem = await MenuItem.findByIdAndDelete(id);
+
+    if (!deletedMenuItem) {
+      return res.status(404).json({ success: false, message: "Menu Item not found" });
+    }
+
+    res.status(200).json({ success: true, message: "Menu Item deleted successfully" });
   } catch (error) {
     console.error(error); // Log the error for debugging purposes
     res.status(error.status || 500).json({ message: error.message || "Internal server error" });

@@ -16,6 +16,18 @@ import { Profile } from './pages/user/profile.jsx';
 import { MenuItem } from './pages/user/menuItem.jsx';
 import { RestaurantPage } from './pages/user/restaurantPage.jsx';
 import { OrderHistoryPage } from './pages/user/OrdersHistoryPage.jsx';
+import { AdminLayout } from './layout/AdminLayout.jsx';
+import { AdminHome } from './pages/admin/AdminHome.jsx';
+import { RestaurantAdmin } from './pages/admin/restaurant/RestaurantAdmin.jsx';
+import { AdminLoginPage } from './pages/admin/AdminLoginPage.jsx';
+import { MenuAdmin } from './pages/admin/menu/MenuAdmin .jsx';
+import { DishesAdmin } from './pages/admin/dishes/DishesAdmin .jsx';
+import { UsersAdmin } from './pages/admin/UserAdmin.jsx';
+import { AdminAuth } from './protected routes/AdminAuth.jsx';
+import { AddRestaurant } from './pages/admin/restaurant/AddRestaurant.jsx';
+import { EditRestaurant } from './pages/admin/restaurant/EditResturant.jsx';
+import { EditMenuItem } from './pages/admin/menu/EditMenuItem.jsx';
+import AddMenuItems from './pages/admin/menu/AddMenuItem.jsx';
 
 
 
@@ -85,9 +97,64 @@ const router = createBrowserRouter([
         element: <CartPage/>
       }
     ]
-  }
+  },
 
+
+  {
+    path: "admin",
+    errorElement: <ErrorPage />,
+    children: [
+      {
+        path: "login",
+        element: <AdminLoginPage />,
+      },
+      
+      // Routes that need AdminAuth protection
+      {
+        element: <AdminAuth> <AdminLayout /></AdminAuth>,
+        children: [
+          {
+            path: "",
+            element: <AdminHome />,
+          },
+          {
+            path: "manage-restaurant",
+            element: <RestaurantAdmin />,
+          },
+          {
+            path: "manage-restaurant/add-restaurant",
+            element: <AddRestaurant/>
+          },
+          {
+            path: "manage-restaurant/:id",
+            element: <EditRestaurant/>
+          },
+          {
+            path: "manage-menu",
+            element: <MenuAdmin />,
+          },
+          {
+            path: "manage-menu/:id" ,
+            element: <EditMenuItem/>
+          },
+          {
+            path: "manage-menu/add-menu",
+            element: <AddMenuItems/>
+          },
+          {
+            path: "manage-dishes",
+            element: <DishesAdmin />,
+          },
+          {
+            path: "manage-users",
+            element: <UsersAdmin />,
+          },
+        ],
+      },
+    ],
+  },
 ]);
+
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>

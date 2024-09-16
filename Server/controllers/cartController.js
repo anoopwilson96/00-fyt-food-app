@@ -98,9 +98,8 @@ export const getCart = async (req, res, next) => {
     const cart = await (await Cart.find({ user: userId, status: { $ne: null }}).populate('items.dish').populate('restaurant'))
        // Step 1: Delete any carts with status 'null' for the user
     const deleteNull =   await Cart.deleteMany({ user: userId, status: { $in: ['null',null ] } });
-    if (deleteNull){
-      console.log("deleted Null carts")
-    } else{console.log("Not deleted")}
+    if (!deleteNull){
+    console.log("Failed to delete Null carts")}
 
     if (!cart) {
       return res.status(404).json({ success: false, message: 'Your cart is empty' });

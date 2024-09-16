@@ -31,6 +31,7 @@ image: {
 menuItems:[{
   type: Schema.Types.ObjectId,
   ref: 'MenuItem',
+  required: true
 }]
 })
 

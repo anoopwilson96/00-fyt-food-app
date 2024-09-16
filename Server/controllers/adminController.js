@@ -7,7 +7,6 @@ import { generateToken } from '../utils/generateToken.js';
 export const addAdmin = async (req, res, next) => {
   try {
     const { name, email, password, mobile, role } = req.body;
-console.log(req.body);
 
     // Validate required fields
     if (!name || !email || !password || !mobile) {

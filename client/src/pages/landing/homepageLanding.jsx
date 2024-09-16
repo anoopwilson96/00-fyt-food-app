@@ -194,7 +194,10 @@ export const HomepageLanding = () => {
 
         {/* Admin Login Section */}
         <div className="text-center mt-12">
+          <Link to={'/admin/login'}>
           <button className="btn btn-outline btn-accent">Admin Login</button>
+          </Link>
+          
         </div>
       </section>
     </>
