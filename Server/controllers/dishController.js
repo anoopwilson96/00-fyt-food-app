@@ -5,6 +5,7 @@ import { imageUploadCloudinary } from "../utils/cloudinaryUpload.js";
 export const addDish = async (req, res, next) => {
   try {
     const { name, description, price, image, menuItem } = req.body;
+    console.log(req.body)
 
     // Check if all required fields are provided
     if (!name || !description || !price || !menuItem) {
@@ -25,6 +26,8 @@ export const addDish = async (req, res, next) => {
 
     // Save the new dish to the database
     await dish.save();
+
+    
 
     res.status(200).json({ success: true, message: 'Dish added successfully',dish });
 
@@ -91,6 +94,7 @@ export const updateDish = async (req, res, next) => {
     // Update dish details
     const updatedDish = await Dish.findByIdAndUpdate(
       id,
+
       {
         name,
         description,
@@ -115,5 +119,24 @@ export const updateDish = async (req, res, next) => {
 
 
 
-// Add BULK data to MongoDB
+// Delete dish
 
+// Delete a Menu Item by ID
+export const deleteDish = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    console.log(id)
+
+    // Find and delete the menu item by ID
+    const deletedDish = await Dish.findByIdAndDelete(id);
+
+    if (!deletedDish) {
+      return res.status(404).json({ success: false, message: "Dish Item not found" });
+    }
+
+    res.status(200).json({ success: true, message: "Dish Item deleted successfully" });
+  } catch (error) {
+    console.error(error); // Log the error for debugging purposes
+    res.status(error.status || 500).json({ message: error.message || "Internal server error" });
+  }
+};

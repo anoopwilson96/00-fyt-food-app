@@ -22,12 +22,13 @@ import { RestaurantAdmin } from './pages/admin/restaurant/RestaurantAdmin.jsx';
 import { AdminLoginPage } from './pages/admin/AdminLoginPage.jsx';
 import { MenuAdmin } from './pages/admin/menu/MenuAdmin .jsx';
 import { DishesAdmin } from './pages/admin/dishes/DishesAdmin .jsx';
-import { UsersAdmin } from './pages/admin/UserAdmin.jsx';
 import { AdminAuth } from './protected routes/AdminAuth.jsx';
 import { AddRestaurant } from './pages/admin/restaurant/AddRestaurant.jsx';
 import { EditRestaurant } from './pages/admin/restaurant/EditResturant.jsx';
 import { EditMenuItem } from './pages/admin/menu/EditMenuItem.jsx';
 import AddMenuItems from './pages/admin/menu/AddMenuItem.jsx';
+import AddDish from './pages/admin/dishes/AddDish.jsx';
+import EditDish from './pages/admin/dishes/EditDish.jsx';
 
 
 
@@ -146,8 +147,12 @@ const router = createBrowserRouter([
             element: <DishesAdmin />,
           },
           {
-            path: "manage-users",
-            element: <UsersAdmin />,
+            path: "manage-dishes/add-dish",
+            element: <AddDish/>,
+          },
+          {
+            path: "manage-dishes/:id",
+            element: <EditDish/>,
           },
         ],
       },

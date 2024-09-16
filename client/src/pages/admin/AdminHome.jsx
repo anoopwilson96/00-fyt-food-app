@@ -35,12 +35,12 @@ export const AdminHome = () => {
 
         {/* Manage Users Section */}
 
-        <Link  to={'/admin/manage-users'} >
+        {/* <Link  to={'/admin/manage-users'} >
         <section className="flex flex-row justify-center items-center space-x-2 bg-neutral-100 p-4 rounded-lg shadow-md">
          <h2 className="text-lg font-semibold">Manage Users</h2>
           <FaArrowRight />
         </section>
-        </Link>  
+        </Link>   */}
 
       </main>
     </>
