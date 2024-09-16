@@ -32,6 +32,14 @@ export const Header = () => {
     fetchUser();
   }, []);
 
+
+  const handleAddressChange = (e) => {
+    const selectedOption = e.target.value;
+    if (selectedOption === 'addAddress') {
+      navigate('/user/my-profile'); // Navigate to add address section
+    }
+  };
+
   return (
     <main className="mx-auto bg-base-300">
       {/* Main Navbar */}
@@ -54,12 +62,28 @@ export const Header = () => {
               className="input input-bordered w-24 md:w-44"
             />
           </div>
-          <select className="bg-white select select-ghost max-w-50" defaultValue="">
-            <option disabled>Choose location</option>
-            <option>Whistler</option>
-            <option>Vancouver</option>
-            <option>Burnaby</option>
-          </select>
+          <select
+      className="bg-white select select-ghost max-w-50"
+      defaultValue="default"
+      onChange={handleAddressChange}
+    >
+      {/* User's current address */}
+      {user?.address ? (
+        <option value="default" disabled>
+          {user.address}
+        </option>
+      ) : (
+        <option value="default" disabled>
+          No Address Available
+        </option>
+      )}
+
+      {/* Add Address option */}
+      <option value="addAddress">Add Address</option>
+    </select>
+  
+
+
         </div>
 
         {/* Dark Mode Toggle */}
@@ -142,12 +166,20 @@ export const Header = () => {
             className="input input-bordered w-24 md:w-44"
           />
         </div>
-        <select className="select select-ghost max-w-50" defaultValue="">
-          <option disabled>Choose location</option>
-          <option>Whistler</option>
-          <option>Vancouver</option>
-          <option>Burnaby</option>
-        </select>
+        <select
+    className="bg-white select select-ghost max-w-40"
+    defaultValue="default"
+    onChange={handleAddressChange}
+  >
+    {/* User's current address */}
+    <option value="default" disabled>
+      {user?.address ? user.address : 'No Address Available'}
+    </option>
+
+    {/* Add Address option */}
+    <option value="addAddress">Add Address</option>
+  </select>
+
       </div>
     </main>
   );

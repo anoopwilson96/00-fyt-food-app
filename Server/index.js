@@ -19,8 +19,6 @@ app.use(cors({
 app.use(express.json())
 app.use(cookieParser())
 
-
-
 const port = process.env.PORT_NUMBER
 
 //Route Handlers

@@ -11,7 +11,7 @@ router.post('/add',addUser)
 router.post('/login',userLogin)
 router.post('/logout',userLogout)
 router.get('/profile',authUser,userProfile)
-router.patch('/update/:id',upload.single('image'),authUser,userUpdate)
+router.patch('/update',upload.single('image'),authUser,userUpdate)
 
 //For Front End purpose
 

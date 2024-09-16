@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 
 export const HomepageLanding = () => {
   return (
-    <>
+    < div className="mx-auto max-w-5xl">
           <section className="flex-grow p-6">
         {/* Services Section */}
         <div className="text-center my-8">
@@ -200,6 +200,6 @@ export const HomepageLanding = () => {
           
         </div>
       </section>
-    </>
+    </div>
   )
 }

@@ -27,7 +27,7 @@ image: {
   default:
       "https://res.cloudinary.com/aw96/image/upload/v1723432338/depositphotos_137014128-stock-illustration-user-profile-icon_a3ghy1.webp",
 },
-location: {
+address: {
     type: String,
     },
 cart: [{

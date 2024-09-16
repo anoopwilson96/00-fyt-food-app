@@ -33,7 +33,7 @@ export const DishesCard = ({ dish, restaurantId }) => {
       
         if (!confirmClear) {
           // Assuming currentCart.restaurant is an object with an _id field
-          navigate(`/user/restaurant/${currentCart.restaurant._id}`);
+          navigate(`/user/cart`);
           return; // Exit if the user cancels
         }
       }

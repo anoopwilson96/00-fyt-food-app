@@ -95,3 +95,21 @@ export const fetchUser = async ()=>{
       return null; // Return null in case of error
     }
   };
+
+
+  //Update user
+  export const updateUser = async (formData) => {
+    try {
+      const response = await axiosInstance({
+        url: '/user/update',
+        method: 'PATCH',
+        data: formData,
+        withCredentials: true,
+      });
+      return response;
+    } catch (error) {
+      console.log(error, "=== Update profile axios failed");
+      throw error;
+    }
+  };
+  

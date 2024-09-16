@@ -2,11 +2,11 @@
 import bcrypt from 'bcrypt'
 import { User } from '../models/userModel.js';
 import { generateUserToken } from '../utils/generateToken.js';
-
+import { imageUploadCloudinary } from "../utils/cloudinaryUpload.js";
 
 export  const addUser = async (req, res, next) => {
   try {
- const {name,email,password,mobile,profilePic,location} = req.body
+ const {name,email,password,mobile,profilePic,address} = req.body
   if (!name||!email||!password) {
   
     return res.status(401).json({success:false,message:"all field required"})
@@ -20,7 +20,7 @@ export  const addUser = async (req, res, next) => {
   const saltRounds = 10;
   const hashedPassword = bcrypt.hashSync(password, saltRounds);
 
-  const newUser = new User({name,email,password:hashedPassword,mobile,profilePic,location})
+  const newUser = new User({name,email,password:hashedPassword,mobile,profilePic,address})
   await newUser.save()
 const userId = newUser._id
   const token = generateUserToken(email,userId)
@@ -60,6 +60,7 @@ export  const userLogin = async (req, res, next) => {
   if (!passwordMatch) {
       return res.status(400).json({ success: false, message: "user not authenticated" });
   }
+
   const userId = userExist._id
   const token = generateUserToken(email,userId);
 
@@ -104,22 +105,25 @@ export  const userProfile = async (req, res, next) => {
 
 
 //user update
-
 export const userUpdate = async (req, res, next) => {
   try {
-    const { id } = req.params;
-    const { name, mobile, location, image } = req.body;
+    const { email } = req.cookies;
+    const { name, mobile, address } = req.body;
 
     // Upload image to Cloudinary if a file is provided
-    const imageUrl = req.file ? await imageUploadCloudinary(req.file.path) : image;
+    let imageUrl = req.file ? await imageUploadCloudinary(req.file.path) : undefined;
 
-    // Update user details
-    const user = await User.findByIdAndUpdate(id, {
-      name,
-      mobile,
-      location,
-      image: imageUrl || image,
-    }, { new: true }); // Return the updated document
+    // Update user details in MongoDB
+    const user = await User.findOneAndUpdate(
+      email,
+      {
+        name,
+        mobile,
+        address,
+        ...(imageUrl && { image: imageUrl }), // Update image only if a new one was uploaded
+      },
+      { new: true } // Return the updated document
+    );
 
     if (!user) {
       return res.status(404).json({ success: false, message: "User not found" });
@@ -127,7 +131,8 @@ export const userUpdate = async (req, res, next) => {
 
     res.status(200).json({ success: true, message: "User updated successfully", data: user });
   } catch (error) {
-    res.status(error.status || 500).json({ message: error.message || "Internal server error" });
+    console.error(error); // Log the actual error for debugging
+    res.status(500).json({ success: false, message: "Internal server error" });
   }
 };
 
