@@ -41,27 +41,6 @@ const logout = async ()=>{
             <button onClick={logout} className="bg-red-500 text-white px-4 py-2 rounded-lg">Logout</button>
           </div>
         </div>
-{/* 
-        
-        <div className="container mx-auto flex justify-around items-center mt-4 p-4 rounded-lg">
-         <ul className="flex space-x-6">
-            <li>
-              <Link to="#">
-                <button className="bg-white text-neutral px-4 py-2 rounded-full">Manage Restaurants</button>
-              </Link>
-            </li>
-            <li>
-              <Link to="#">
-                <button className="bg-white text-neutral px-4 py-2 rounded-full">Manage Menu Items</button>
-              </Link>
-            </li>
-            <li>
-              <Link to="#">
-                <button className="bg-white text-neutral px-4 py-2 rounded-full">Manage Dishes</button>
-              </Link>
-            </li>
-          </ul>
-        </div> */}
       </header>
     </div>
   );
