@@ -11,7 +11,8 @@ const app = express()
 app.use(cors({
   origin: [
     "https://00-fyt-food-app.vercel.app",
-    "http://localhost:5174"
+    "http://localhost:5174",
+    "https://zero0-fyt-food-app.onrender.com"
   ],
  credentials: true
 }))
