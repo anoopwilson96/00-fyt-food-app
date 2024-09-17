@@ -47,6 +47,7 @@ const getUserData = async () => {
       setUser(updatedUser.data);
       setIsEditing(false); // Hide the form after saving changes
       toast.success('Profile updated successfully!');
+      location.reload();
 
 
       await getUserData()
