@@ -68,7 +68,8 @@ export const getActiveCart = async (req, res, next) => {
 // Find the active cart for the user
     const cart = await Cart.findOne({ user: userId, status: 'active' })
       .populate('restaurant')
-      .populate('items.dish');
+      .populate('items.dish')
+      .populate('user');
 
     if (!cart) {
       return res.status(200).json({ 

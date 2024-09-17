@@ -5,9 +5,10 @@ import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
 
 export const CartPage = () => {
-  const [cartItems, setCartItems] = useState([]); 
+  const [cartItems, setCartItems] = useState([]);
   const [cartDetails, setCartDetails] = useState();
-  const navigate = useNavigate()
+  const [userDetails, setUserDetails] = useState();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchCartItems = async () => {
@@ -18,8 +19,8 @@ export const CartPage = () => {
           withCredentials: true,
         });
         setCartDetails(response?.data);
-        setCartItems(response?.data?.cart?.items || []); 
-        console.log(response);
+        setCartItems(response?.data?.cart?.items || []);
+        setUserDetails(response?.data?.cart?.user);
       } catch (error) {
         toast.error("Failed to load cart: Try later");
         console.log(error);
@@ -27,13 +28,13 @@ export const CartPage = () => {
     };
 
     fetchCartItems();
-  }, []); 
+  }, []);
 
   // Function to update the cart in the backend
   const updateCartOnServer = async (updatedItems) => {
     try {
       await axiosInstance({
-        url: '/cart/update', // Create this route on the backend
+        url: '/cart/update',
         method: 'PUT',
         data: {
           items: updatedItems
@@ -93,8 +94,7 @@ export const CartPage = () => {
     await updateCartOnServer(updatedItems); // Sync with the backend
   };
 
-
-  const  handlePayment = async () => {
+  const handlePayment = async () => {
     try {
       // Create Razorpay order on the backend
       const orderResponse = await axiosInstance({
@@ -103,9 +103,9 @@ export const CartPage = () => {
         data: { amount: cartDetails?.cart?.total }, // Send the amount to create an order
         withCredentials: true,
       });
-  
+
       const { id: order_id, amount, currency } = orderResponse.data;
-  
+
       const options = {
         key: import.meta.env.VITE_RAZORPAY_KEY_ID, // Razorpay key
         amount: amount.toString(),
@@ -115,7 +115,7 @@ export const CartPage = () => {
         order_id: order_id, // Razorpay order ID
         handler: async function (response) {
           const { razorpay_payment_id, razorpay_order_id, razorpay_signature } = response;
-  
+
           // Send payment details to the backend to verify the payment
           try {
             const verifyResponse = await axiosInstance.post("/payment/verify-payment", {
@@ -123,7 +123,7 @@ export const CartPage = () => {
               order_id: razorpay_order_id,
               signature: razorpay_signature,
             });
-  
+
             if (verifyResponse.data.status === "success") {
               toast.success("Payment successful!");
               // Now proceed to checkout
@@ -137,7 +137,7 @@ export const CartPage = () => {
           }
         },
         prefill: {
-          name: "Your Name",
+          name: "user",
           email: "yourname@example.com",
           contact: "9999999999",
         },
@@ -145,7 +145,7 @@ export const CartPage = () => {
           color: "#3399cc",
         },
       };
-  
+
       const rzp = new window.Razorpay(options);
       rzp.open();
     } catch (error) {
@@ -153,19 +153,19 @@ export const CartPage = () => {
       console.error("Payment error:", error);
     }
   };
-  
+
   const checkout = async () => {
     try {
       // Ensure the cart is updated with the latest data
       await updateCartOnServer(cartItems);
-  
+
       // Proceed with the checkout API call
       const response = await axiosInstance({
         url: '/cart/checkout',
         method: "POST",
         withCredentials: true,
       });
-  
+
       if (response.status === 200) {
         toast.success("Checkout successful!");
         console.log('Checkout successful:', response.data);
@@ -179,8 +179,8 @@ export const CartPage = () => {
     }
     navigate('/user/order-history')
   };
-  
-  
+
+  const addressExists = userDetails && userDetails.address;
 
   return (
     <div className="flex flex-col items-center justify-center p-4 md:p-10">
@@ -250,9 +250,30 @@ export const CartPage = () => {
               ₹ {cartDetails?.cart?.total ? cartDetails.cart.total.toFixed(2) : "0.00"}
             </p>
           </div>
+
+          {/* Address Section */}
+          <div className="mt-6 mb-4 p-4 border rounded-lg border-gray-300">
+            <h3 className="text-lg font-semibold mb-2">Delivery Address</h3>
+            {addressExists ? (
+              <div className="form-control">
+                <label className="label cursor-pointer">
+                  <span className="label-text">{userDetails.address}</span>
+                </label>
+              </div>
+            ) : (
+              <button
+                onClick={() => navigate('/user/my-profile')}
+                className="text-blue-500 hover:underline"
+              >
+                + Add address to proceed
+              </button>
+            )}
+          </div>
+
           <button
-            className="w-full bg-blue-600 text-white py-3 rounded-lg mt-4 hover:bg-blue-700"
+            className={`w-full bg-blue-600 text-white py-3 rounded-lg mt-4 hover:bg-blue-700 ${!addressExists ? 'opacity-50 cursor-not-allowed' : ''}`}
             onClick={handlePayment}
+            disabled={!addressExists}
           >
             Proceed to Checkout
           </button>
