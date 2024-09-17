@@ -79,10 +79,15 @@ export  const userLogin = async (req, res, next) => {
   }
 }
 
+
 export const userLogout = async (req, res, next) => {
   try {
-      res.clearCookie("token");
-
+      res.clearCookie("token", {
+        path: "/",            // must match the 'path' used when setting the cookie
+        httpOnly: true,       // same as when setting the cookie
+        secure: true,         // must match if the cookie was set with 'secure: true'
+        sameSite: "None"      // must match the 'SameSite' setting
+      });
       res.status(200).json({ success: true, message: "user logout successfully" });
   } catch (error) {
       res.status(error.status || 500).json({ message: error.message || "Internal server error" });
@@ -93,9 +98,10 @@ export const userLogout = async (req, res, next) => {
 
 export  const userProfile = async (req, res, next) => {
   try {
-      // const { id } = req.params;
-      const {email} = req.cookies;
-      const userData = await User.findOne(email).select("-password");
+     
+      const {email} = req.user;
+      
+      const userData = await User.findOne({email}).select("-password");
 
       res.json({ success: true, message: "user data fetched", data: userData });
   } catch (error) {
@@ -107,7 +113,7 @@ export  const userProfile = async (req, res, next) => {
 //user update
 export const userUpdate = async (req, res, next) => {
   try {
-    const { email } = req.cookies;
+    const { email } = req.user;
     const { name, mobile, address } = req.body;
 
     // Upload image to Cloudinary if a file is provided
@@ -115,7 +121,7 @@ export const userUpdate = async (req, res, next) => {
 
     // Update user details in MongoDB
     const user = await User.findOneAndUpdate(
-      email,
+      {email},
       {
         name,
         mobile,

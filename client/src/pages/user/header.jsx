@@ -7,6 +7,10 @@ import { axiosInstance } from '../../config/axiosInstance';
 export const Header = () => {
   const navigate = useNavigate();
   const [user, setUser] = useState({});
+  const [cartItems, setCartItems] = useState([]);
+  const [cartTotal,setCartTotal]= useState()
+  const [cartDetails, setCartDetails] = useState();
+  const [userDetails, setUserDetails] = useState();
 
   // Logout Functionality
   const logout = async () => {
@@ -14,28 +18,51 @@ export const Header = () => {
     navigate('/');
   };
 
-  // Fetch User Profile
-  const fetchUser = async () => {
-    try {
-      const response = await axiosInstance({
-        url: '/user/profile',
-        method: 'GET',
-        withCredentials: true,
-      });
-      setUser(response?.data?.data);
-    } catch (error) {
-      console.log('Error fetching profile pic');
-    }
-  };
+    // Fetch User Profile 
+    // const fetchUser = async () => {
+    //   try {
+    //     const response = await axiosInstance({
+    //       url: '/user/profile',
+    //       method: 'GET',
+    //       withCredentials: true,
+    //     });
+    //     setUser(response?.data?.data);
+    //   } catch (error) {
+    //     console.log('Error fetching profile pic');
+    //   }
+    // };
+  
+    // useEffect(() => {
+    //   fetchUser();
+    // }, []);
+  
+  
+// fetch cart details, need to replace when REDUX is introduced
 
   useEffect(() => {
-    fetchUser();
+    const fetchCartItems = async () => {
+      try {
+        const response = await axiosInstance({
+          url: "cart/active",
+          method: "GET",
+          withCredentials: true,
+        });
+        setCartDetails(response?.data);
+        setCartItems(response?.data?.cart?.items || []);
+        setCartTotal(response?.data?.cart.subtotal)
+        setUserDetails(response?.data?.cart?.user);
+      } catch (error) {
+        toast.error("Failed to load cart: Try later");
+        console.log(error);
+      }
+    };
+  
+    fetchCartItems();
   }, []);
 
 
 
 
-  
   const handleAddressChange = (e) => {
     const selectedOption = e.target.value;
     if (selectedOption === 'addAddress') {
@@ -71,9 +98,9 @@ export const Header = () => {
       onChange={handleAddressChange}
     >
       {/* User's current address */}
-      {user?.address ? (
+      {userDetails?.address ? (
         <option value="default" disabled>
-          {user.address}
+          {userDetails.address}
         </option>
       ) : (
         <option value="default" disabled>
@@ -110,13 +137,15 @@ export const Header = () => {
                   d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"
                 />
               </svg>
-              <span className="badge badge-sm indicator-item">8</span>
+              <span className="badge badge-sm indicator-item">{cartItems.length}</span>
             </div>
           </div>
           <div tabIndex={0} className="card card-compact dropdown-content bg-base-100 z-[1] mt-3 w-52 shadow">
             <div className="card-body">
-              <span className="text-lg font-bold">8 Items</span>
-              <span className="text-slate-800 font-medium">Subtotal: $999</span>
+              <span className="text-lg font-bold">{cartItems.length} Items</span>
+              <span className="text-slate-800 font-medium">
+                    Subtotal: ₹ { (cartTotal || 0).toFixed(2) }
+              </span>
               <div className="card-actions">
                 <Link to={'/user/cart'}>
                   <button className="btn btn-primary text-white btn-block">View cart</button>
@@ -133,7 +162,7 @@ export const Header = () => {
               <img
                 alt="Profile avatar"
                 src={
-                  user?.image ||
+                  userDetails?.image ||
                   'https://res.cloudinary.com/aw96/image/upload/v1723432338/depositphotos_137014128-stock-illustration-user-profile-icon_a3ghy1.webp'
                 }
               />

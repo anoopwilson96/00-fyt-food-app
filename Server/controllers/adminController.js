@@ -103,7 +103,12 @@ export  const adminLogin = async (req, res, next) => {
 
 export const adminLogout = async (req, res, next) => {
   try {
-      res.clearCookie("token");
+      res.clearCookie("token", {
+        path: "/",            // must match the 'path' used when setting the cookie
+        httpOnly: true,       // same as when setting the cookie
+        secure: true,         // must match if the cookie was set with 'secure: true'
+        sameSite: "None"      // must match the 'SameSite' setting
+      });
 
       res.json({ success: true, message: "Admin Logout successfully" });
   } catch (error) {
