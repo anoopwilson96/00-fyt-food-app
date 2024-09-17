@@ -137,9 +137,9 @@ export const CartPage = () => {
           }
         },
         prefill: {
-          name: "user",
-          email: "yourname@example.com",
-          contact: "9999999999",
+          name: userDetails?.name || "Guest",
+          email: userDetails?.email || "guest@example.com",
+          contact: userDetails?.mobile || "9999999999",
         },
         theme: {
           color: "#3399cc",
