@@ -63,7 +63,7 @@ const getUserData = async () => {
       {/* Section 1: Profile Display */}
       <div className="section1 bg-gray-100 p-10">
         <div className="max-w-md mb-10 mt-10 mx-auto bg-white p-8 rounded-lg shadow-md border border-gray-200">
-          <h2 className="text-3xl font-bold text-center mb-6 text-gray-800">{user?.name}'s Profile</h2>
+          <h2 className="text-3xl font-semibold text-center mb-10 text-gray-500"> {user?.name ? `${user?.name}'s` : 'Your'} Profile  </h2>
 
           <div className="flex flex-col items-center">
             <div className="avatar">

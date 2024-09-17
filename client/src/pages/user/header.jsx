@@ -3,6 +3,7 @@ import { DarkMode } from '../../UI/DarkMode';
 import { Link, useNavigate } from 'react-router-dom';
 import { UserLogout } from '../../services/userAPI';
 import { axiosInstance } from '../../config/axiosInstance';
+import toast from 'react-hot-toast';
 
 export const Header = () => {
   const navigate = useNavigate();
@@ -18,23 +19,25 @@ export const Header = () => {
     navigate('/');
   };
 
-    // Fetch User Profile 
-    // const fetchUser = async () => {
-    //   try {
-    //     const response = await axiosInstance({
-    //       url: '/user/profile',
-    //       method: 'GET',
-    //       withCredentials: true,
-    //     });
-    //     setUser(response?.data?.data);
-    //   } catch (error) {
-    //     console.log('Error fetching profile pic');
-    //   }
-    // };
+   // Fetch User Profile 
+    const fetchUser = async () => {
+      try {
+        const response = await axiosInstance({
+          url: '/user/profile',
+          method: 'GET',
+          withCredentials: true,
+        });
+        setUser(response?.data?.data);
+
+        console.log(response,"=====user")
+      } catch (error) {
+        console.log('Error fetching profile pic');
+      }
+    };
   
-    // useEffect(() => {
-    //   fetchUser();
-    // }, []);
+    useEffect(() => {
+      fetchUser();
+    }, []);
   
   
 // fetch cart details, need to replace when REDUX is introduced
@@ -49,7 +52,7 @@ export const Header = () => {
         });
         setCartDetails(response?.data);
         setCartItems(response?.data?.cart?.items || []);
-        setCartTotal(response?.data?.cart.subtotal)
+        setCartTotal(response?.data?.cart?.subtotal)
         setUserDetails(response?.data?.cart?.user);
       } catch (error) {
         toast.error("Failed to load cart: Try later");
@@ -98,18 +101,13 @@ export const Header = () => {
       onChange={handleAddressChange}
     >
       {/* User's current address */}
-      {userDetails?.address ? (
-        <option value="default" disabled>
-          {userDetails.address}
+
+      <option value="default" disabled>
+          {userDetails?.address || user?.address || 'No Address Available'}
         </option>
-      ) : (
-        <option value="default" disabled>
-          No Address Available
-        </option>
-      )}
 
       {/* Add Address option */}
-      <option value="addAddress">Add Address</option>
+      <option value="addAddress">Add Location</option>
     </select>
   
 
@@ -162,8 +160,9 @@ export const Header = () => {
               <img
                 alt="Profile avatar"
                 src={
-                  userDetails?.image ||
-                  'https://res.cloudinary.com/aw96/image/upload/v1723432338/depositphotos_137014128-stock-illustration-user-profile-icon_a3ghy1.webp'
+                  userDetails?.image || // Cart profile picture
+                  user?.image || // Fallback to user profile pic from user data
+                  'https://res.cloudinary.com/aw96/image/upload/v1723432338/depositphotos_137014128-stock-illustration-user-profile-icon_a3ghy1.webp' // Default placeholder
                 }
               />
             </div>
@@ -205,8 +204,9 @@ export const Header = () => {
   >
     {/* User's current address */}
     <option value="default" disabled>
-      {user?.address ? user.address : 'No Address Available'}
-    </option>
+  {userDetails?.address || user?.address || 'No Address Available'}
+</option>
+
 
     {/* Add Address option */}
     <option value="addAddress">Add Address</option>

@@ -7,7 +7,7 @@ const router = express.Router()
 router.get('/test',(req,res)=>{ res.send('This is a test request')})
 
 router.post('/add',authAdmin,addCoupon)
-router.post('/active',fetchActiveCoupons)
+router.get('/active',fetchActiveCoupons)
 router.post('/delete',deleteCoupon)
 
 export default router

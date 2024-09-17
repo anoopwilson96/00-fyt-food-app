@@ -1,6 +1,6 @@
+import { axiosInstance } from '../../config/axiosInstance';
 import React, { useEffect, useState } from 'react';
 import { AiOutlinePlus, AiOutlineMinus, AiOutlineDelete } from 'react-icons/ai';
-import { axiosInstance } from '../../config/axiosInstance';
 import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
 
@@ -8,50 +8,43 @@ export const CartPage = () => {
   const [cartItems, setCartItems] = useState([]);
   const [cartDetails, setCartDetails] = useState();
   const [userDetails, setUserDetails] = useState();
+  const [coupons, setCoupons] = useState([]);
+  const [appliedCoupon, setAppliedCoupon] = useState(null);
+  const [discountAmount, setDiscountAmount] = useState(0);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const fetchCartItems = async () => {
-      try {
-        const response = await axiosInstance({
-          url: "cart/active",
-          method: "GET",
-          withCredentials: true,
-        });
-        setCartDetails(response?.data);
-        setCartItems(response?.data?.cart?.items || []);
-        setUserDetails(response?.data?.cart?.user);
-      } catch (error) {
-        toast.error("Failed to load cart: Try later");
-        console.log(error);
-      }
-    };
-  
-    fetchCartItems();
-  }, []);
+  // Apply coupon function
+  const applyCoupon = (couponCode) => {
+    const selectedCoupon = coupons.find((coupon) => coupon.code === couponCode);
 
-  // Function to update the cart in the backend
-  const updateCartOnServer = async (updatedItems) => {
-    try {
-      await axiosInstance({
-        url: '/cart/update',
-        method: 'PUT',
-        data: {
-          items: updatedItems
-        },
-        withCredentials: true,
-      });
-      console.log("Cart updated successfully on server.");
-    } catch (error) {
-      toast.error("Failed to update cart: Try later");
-      console.log(error);
+    if (!selectedCoupon) {
+      toast.error("Invalid coupon");
+      return;
     }
+
+    const discountValue = (cartDetails?.cart?.subtotal * selectedCoupon.discount) / 100;
+    setAppliedCoupon(selectedCoupon);
+    setDiscountAmount(discountValue);
+
+    toast.success(`${selectedCoupon.code} applied! You get ${selectedCoupon.discount}% off.`);
+    calculateTotals(cartItems, discountValue);
   };
 
-  const calculateTotals = (updatedItems) => {
-    const subtotal = updatedItems.reduce((acc, item) => acc + (item.dish.price * item.quantity), 0);
+  // Remove coupon function
+  const removeCoupon = () => {
+    setAppliedCoupon(null);
+    setDiscountAmount(0);
+    calculateTotals(cartItems, 0); // Recalculate totals without discount
+  };
+
+  // Function to update totals
+  const calculateTotals = (updatedItems, discount = discountAmount) => {
+    const subtotal = updatedItems.reduce(
+      (acc, item) => acc + item.dish.price * item.quantity,
+      0
+    );
     const tax = subtotal * 0.1; // Assuming a 10% tax rate
-    const total = subtotal + tax;
+    const total = subtotal + tax - discount; // Apply discount here
 
     setCartDetails({
       ...cartDetails,
@@ -59,22 +52,70 @@ export const CartPage = () => {
         ...cartDetails.cart,
         subtotal,
         tax,
-        total
-      }
+        total: total > 0 ? total : 0, // Ensure total doesn't go negative
+      },
     });
   };
 
-  // Update quantity increase function
+  useEffect(() => {
+    const fetchCoupons = async () => {
+      try {
+        const response = await axiosInstance({
+          url: '/coupon/active',
+          method: 'GET',
+          withCredentials: true,
+        });
+        setCoupons(response?.data?.coupons);
+      } catch (error) {
+        toast.error('Failed to load coupons: Try later');
+      }
+    };
+    fetchCoupons();
+  }, []);
+
+  useEffect(() => {
+    const fetchCartItems = async () => {
+      try {
+        const response = await axiosInstance({
+          url: 'cart/active',
+          method: 'GET',
+          withCredentials: true,
+        });
+        setCartDetails(response?.data);
+        setCartItems(response?.data?.cart?.items || []);
+        setUserDetails(response?.data?.cart?.user);
+      } catch (error) {
+        toast.error('Failed to load cart: Try later');
+      }
+    };
+    fetchCartItems();
+  }, []);
+
+  // Update cart on the server
+  const updateCartOnServer = async (updatedItems) => {
+    try {
+      await axiosInstance({
+        url: '/cart/update',
+        method: 'PUT',
+        data: { items: updatedItems },
+        withCredentials: true,
+      });
+    } catch (error) {
+      toast.error('Failed to update cart: Try later');
+    }
+  };
+
+  // Increase quantity
   const increaseQuantity = async (id) => {
     const updatedItems = cartItems.map((item) =>
       item._id === id ? { ...item, quantity: item.quantity + 1 } : item
     );
     setCartItems(updatedItems);
-    calculateTotals(updatedItems); // Recalculate totals when quantity changes
-    await updateCartOnServer(updatedItems); // Sync with the backend
+    calculateTotals(updatedItems); // Recalculate totals
+    await updateCartOnServer(updatedItems); // Sync with backend
   };
 
-  // Update quantity decrease function
+  // Decrease quantity
   const decreaseQuantity = async (id) => {
     const updatedItems = cartItems.map((item) =>
       item._id === id && item.quantity > 1
@@ -82,142 +123,130 @@ export const CartPage = () => {
         : item
     );
     setCartItems(updatedItems);
-    calculateTotals(updatedItems); // Recalculate totals when quantity changes
-    await updateCartOnServer(updatedItems); // Sync with the backend
+    calculateTotals(updatedItems); // Recalculate totals
+    await updateCartOnServer(updatedItems); // Sync with backend
   };
 
-  // Update remove item function
+  // Remove item
   const removeItem = async (id) => {
     const updatedItems = cartItems.filter((item) => item._id !== id);
     setCartItems(updatedItems);
-    calculateTotals(updatedItems); // Recalculate totals when an item is removed
-    await updateCartOnServer(updatedItems); // Sync with the backend
+    calculateTotals(updatedItems); // Recalculate totals
+    await updateCartOnServer(updatedItems); // Sync with backend
   };
 
+  // Payment handling function
   const handlePayment = async () => {
     try {
-      // Create Razorpay order on the backend
       const orderResponse = await axiosInstance({
         url: '/payment/create-order',
-        method: "POST",
-        data: { amount: cartDetails?.cart?.total }, // Send the amount to create an order
+        method: 'POST',
+        data: {
+          amount: cartDetails?.cart?.total, // Send discounted total to create the order
+          coupon: appliedCoupon?._id, // Send the applied coupon
+        },
         withCredentials: true,
       });
 
       const { id: order_id, amount, currency } = orderResponse.data;
 
       const options = {
-        key: import.meta.env.VITE_RAZORPAY_KEY_ID, // Razorpay key
+        key: import.meta.env.VITE_RAZORPAY_KEY_ID,
         amount: amount.toString(),
         currency: currency,
-        name: "Fill Your Tummy",
-        description: "Your food order payment",
-        order_id: order_id, // Razorpay order ID
+        name: 'Fill Your Tummy',
+        description: 'Your food order payment',
+        order_id: order_id,
         handler: async function (response) {
           const { razorpay_payment_id, razorpay_order_id, razorpay_signature } = response;
 
-          // Send payment details to the backend to verify the payment
           try {
-            const verifyResponse = await axiosInstance.post("/payment/verify-payment", {
+            const verifyResponse = await axiosInstance.post('/payment/verify-payment', {
               payment_id: razorpay_payment_id,
               order_id: razorpay_order_id,
               signature: razorpay_signature,
             });
 
-            if (verifyResponse.data.status === "success") {
-              toast.success("Payment successful!");
-              // Now proceed to checkout
-              await checkout(); // Ensure the checkout only happens after payment success
+            if (verifyResponse.data.status === 'success') {
+              toast.success('Payment successful!');
+              await checkout();
             } else {
-              toast.error("Payment verification failed.");
+              toast.error('Payment verification failed.');
             }
           } catch (error) {
-            toast.error("Payment verification error");
-            console.error("Payment verification error:", error);
+            toast.error('Payment verification error');
           }
         },
         prefill: {
-          name: userDetails?.name || "Guest",
-          email: userDetails?.email || "guest@example.com",
-          contact: userDetails?.mobile || "9999999999",
+          name: userDetails?.name || 'Guest',
+          email: userDetails?.email || 'guest@example.com',
+          contact: userDetails?.mobile || '9999999999',
         },
-        theme: {
-          color: "#3399cc",
-        },
+        theme: { color: '#3399cc' },
       };
 
       const rzp = new window.Razorpay(options);
       rzp.open();
     } catch (error) {
-      toast.error("Payment error: Try later");
-      console.error("Payment error:", error);
+      toast.error('Payment error: Try later');
     }
   };
 
   const checkout = async () => {
     try {
-      // Ensure the cart is updated with the latest data
       await updateCartOnServer(cartItems);
-
-      // Proceed with the checkout API call
       const response = await axiosInstance({
         url: '/cart/checkout',
-        method: "POST",
+        method: 'POST',
         withCredentials: true,
       });
 
       if (response.status === 200) {
-        toast.success("Checkout successful!");
-        console.log('Checkout successful:', response.data);
+        toast.success('Checkout successful!');
       } else {
-        toast.error("Checkout failed");
-        console.error('Checkout failed:', response.data.message);
+        toast.error('Checkout failed');
       }
     } catch (error) {
-      toast.error("Error during checkout: Try later");
-      console.error('Error during checkout:', error);
+      toast.error('Error during checkout: Try later');
     }
-    navigate('/user/order-history')
+    navigate('/user/order-history');
   };
 
   const addressExists = userDetails && userDetails.address;
 
   return (
-    <div className="flex flex-col items-center justify-center p-4 md:p-10">
-      <h1 className="text-3xl font-bold mb-8">Your Cart</h1>
+    <div className="flex flex-col items-center justify-center p-6 md:p-12 bg-gray-100 min-h-screen">
+      <h1 className="text-4xl font-bold mb-8 text-gray-800">Your Cart</h1>
 
       {/* Cart Items */}
-      <div className="w-full md:w-2/3 bg-white rounded-lg shadow-lg p-4">
+      <div className="w-full md:w-2/3 bg-white rounded-lg shadow-md p-6 mb-8">
         {cartItems.length > 0 ? (
           cartItems.map((item) => (
             <div
               key={item._id}
-              className="flex justify-between items-center border-b border-gray-200 py-4"
+              className="flex justify-between items-center border-b border-gray-300 py-4"
             >
-              <div className="flex items-center space-x-4">
-                <p className="text-lg font-semibold">{item.dish.name}</p>
-                <p className="text-sm text-gray-500">₹ {item.dish.price.toFixed(2)}</p>
+              <div className="flex items-center space-x-6">
+                <p className="text-lg font-semibold text-gray-700">{item.dish.name}</p>
+                <p className="text-sm text-gray-600">₹ {item.dish.price.toFixed(2)}</p>
               </div>
               <div className="flex items-center space-x-4">
-                {/* Decrease quantity */}
                 <button
                   onClick={() => decreaseQuantity(item._id)}
-                  className="bg-gray-200 p-2 rounded-full hover:bg-gray-300"
+                  className="bg-gray-300 p-2 rounded-full hover:bg-gray-400"
                 >
                   <AiOutlineMinus />
                 </button>
                 <span className="text-lg font-semibold">{item.quantity}</span>
-                {/* Increase quantity */}
                 <button
                   onClick={() => increaseQuantity(item._id)}
-                  className="bg-gray-200 p-2 rounded-full hover:bg-gray-300"
+                  className="bg-gray-300 p-2 rounded-full hover:bg-gray-400"
                 >
                   <AiOutlinePlus />
                 </button>
-                {/* Delete item */}
                 <button
                   onClick={() => removeItem(item._id)}
-                  className="text-red-500 hover:text-red-600"
+                  className="text-red-600 hover:text-red-700"
                 >
                   <AiOutlineDelete />
                 </button>
@@ -231,33 +260,70 @@ export const CartPage = () => {
 
       {/* Total & Checkout Section */}
       {cartItems.length > 0 && (
-        <div className="w-full md:w-2/3 bg-white rounded-lg shadow-lg mt-6 p-4">
-          <div className="flex justify-between">
-            <p className="text-lg font-semibold">Subtotal</p>
-            <p className="text-lg">
-              ₹ {cartDetails?.cart?.subtotal ? cartDetails.cart.subtotal.toFixed(2) : "0.00"}
+        <div className="w-full md:w-2/3 bg-white rounded-lg shadow-md p-6">
+          <div className="p-4 bg-blue-100 border border-blue-300 rounded-lg shadow-md mb-6">
+            <h3 className="text-lg font-bold text-blue-700">Available Coupons</h3>
+            {coupons.length > 0 ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
+                {coupons.map((coupon) => (
+                  <button
+                    key={coupon._id}
+                    className={`border p-3 text-sm rounded-lg transition-all duration-200 ${
+                      appliedCoupon?.code === coupon.code
+                        ? 'bg-green-200 border-green-500 text-green-800'
+                        : 'bg-blue-50 border-blue-200 hover:bg-blue-200'
+                    }`}
+                    onClick={() => applyCoupon(coupon.code)}
+                  >
+                    <span className="font-semibold">{coupon.code}</span> - {coupon.discount}% OFF
+                  </button>
+                ))}
+              </div>
+            ) : (
+              <p className="text-gray-500">No coupons available</p>
+            )}
+            {appliedCoupon && (
+              <button
+                onClick={removeCoupon}
+                className="mt-4 text-red-500 hover:underline"
+              >
+                Remove Coupon
+              </button>
+            )}
+          </div>
+
+          <div className="flex justify-between mb-2">
+            <p className="text-lg font-semibold text-gray-700">Subtotal</p>
+            <p className="text-lg text-gray-800">
+              ₹ {cartDetails?.cart?.subtotal ? cartDetails.cart.subtotal.toFixed(2) : '0.00'}
             </p>
           </div>
-          <div className="flex justify-between">
+          <div className="flex justify-between mb-2">
             <p className="text-sm text-gray-500">GST + HST (10%)</p>
             <p className="text-sm text-gray-500">
-              ₹ {cartDetails?.cart?.tax ? cartDetails.cart.tax.toFixed(2) : "0.00"}
+              ₹ {cartDetails?.cart?.tax ? cartDetails.cart.tax.toFixed(2) : '0.00'}
             </p>
           </div>
-          <div className="flex justify-between font-bold mt-2">
-            <p className="text-xl">Total</p>
-            <p className="text-xl">
-              ₹ {cartDetails?.cart?.total ? cartDetails.cart.total.toFixed(2) : "0.00"}
+          <div className="flex justify-between mb-2">
+            <p className="text-sm text-gray-500">Discount</p>
+            <p className="text-sm text-gray-500">
+              ₹ {discountAmount.toFixed(2)}
+            </p>
+          </div>
+          <div className="flex justify-between font-bold text-xl mb-4">
+            <p>Total</p>
+            <p>
+              ₹ {cartDetails?.cart?.total ? cartDetails.cart.total.toFixed(2) : '0.00'}
             </p>
           </div>
 
           {/* Address Section */}
-          <div className="mt-6 mb-4 p-4 border rounded-lg border-gray-300">
+          <div className="mt-6 p-4 border rounded-lg border-gray-300 bg-gray-50">
             <h3 className="text-lg font-semibold mb-2">Delivery Address</h3>
             {addressExists ? (
               <div className="form-control">
                 <label className="label cursor-pointer">
-                  <span className="label-text">{userDetails.address}</span>
+                  <span className="label-text text-gray-700">{userDetails.address}</span>
                 </label>
               </div>
             ) : (
@@ -271,7 +337,9 @@ export const CartPage = () => {
           </div>
 
           <button
-            className={`w-full bg-blue-600 text-white py-3 rounded-lg mt-4 hover:bg-blue-700 ${!addressExists ? 'opacity-50 cursor-not-allowed' : ''}`}
+            className={`w-full bg-blue-600 text-white py-3 rounded-lg mt-4 hover:bg-blue-700 transition duration-200 ${
+              !addressExists ? 'opacity-50 cursor-not-allowed' : ''
+            }`}
             onClick={handlePayment}
             disabled={!addressExists}
           >
