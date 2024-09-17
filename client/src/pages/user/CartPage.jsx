@@ -26,7 +26,7 @@ export const CartPage = () => {
         console.log(error);
       }
     };
-
+  
     fetchCartItems();
   }, []);
 
