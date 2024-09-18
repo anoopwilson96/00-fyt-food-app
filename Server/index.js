@@ -10,7 +10,7 @@ const app = express()
 
 app.use(cors({
   origin: [
-    "https://00-fyt-food-app.vercel.app",
+    "https://fyt-food-delivery.vercel.app",
     "http://localhost:5173",
     "https://zero0-fyt-food-app.onrender.com"
   ],
