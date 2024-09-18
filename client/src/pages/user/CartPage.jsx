@@ -3,6 +3,8 @@ import React, { useEffect, useState } from 'react';
 import { AiOutlinePlus, AiOutlineMinus, AiOutlineDelete } from 'react-icons/ai';
 import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { updateCart, fetchCart } from '../../services/cartSlice';
 
 export const CartPage = () => {
   const [cartItems, setCartItems] = useState([]);
@@ -12,6 +14,7 @@ export const CartPage = () => {
   const [appliedCoupon, setAppliedCoupon] = useState(null);
   const [discountAmount, setDiscountAmount] = useState(0);
   const navigate = useNavigate();
+  const dispatch = useDispatch()
 
   // Apply coupon function
   const applyCoupon = (couponCode) => {
@@ -100,6 +103,7 @@ export const CartPage = () => {
         data: { items: updatedItems },
         withCredentials: true,
       });
+      dispatch(fetchCart())
     } catch (error) {
       toast.error('Failed to update cart: Try later');
     }
@@ -209,7 +213,9 @@ export const CartPage = () => {
     } catch (error) {
       toast.error('Error during checkout: Try later');
     }
+  
     navigate('/user/order-history');
+    location.reload()
   };
 
   const addressExists = userDetails && userDetails.address;
