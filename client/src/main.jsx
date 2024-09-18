@@ -29,6 +29,9 @@ import { EditMenuItem } from './pages/admin/menu/EditMenuItem.jsx';
 import AddMenuItems from './pages/admin/menu/AddMenuItem.jsx';
 import AddDish from './pages/admin/dishes/AddDish.jsx';
 import EditDish from './pages/admin/dishes/EditDish.jsx';
+import { Provider } from 'react-redux';
+import { store } from '../src/redux/store.js'; 
+
 
 
 
@@ -163,7 +166,9 @@ const router = createBrowserRouter([
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <RouterProvider router={router} />
-    <Toaster />
+<Provider store={store}>
+  <RouterProvider router={router} />
+  <Toaster />
+</Provider>
   </StrictMode>,
 )

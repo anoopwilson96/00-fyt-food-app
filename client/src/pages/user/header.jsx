@@ -1,70 +1,35 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { DarkMode } from '../../UI/DarkMode';
 import { Link, useNavigate } from 'react-router-dom';
+import { useSelector, useDispatch } from 'react-redux';
+import { fetchCart } from '../../services/cartSlice';
+import { fetchUserProfile } from '../../services/userSlice';
 import { UserLogout } from '../../services/userAPI';
-import { axiosInstance } from '../../config/axiosInstance';
 import toast from 'react-hot-toast';
 
 export const Header = () => {
   const navigate = useNavigate();
-  const [user, setUser] = useState({});
-  const [cartItems, setCartItems] = useState([]);
-  const [cartTotal,setCartTotal]= useState()
-  const [cartDetails, setCartDetails] = useState();
-  const [userDetails, setUserDetails] = useState();
+  const dispatch = useDispatch();
+
+  const cart = useSelector((state) => state.cart);
+  const user = useSelector((state) => state.user.details);
+
+  const cartItems = cart.items || [];
+  const cartTotal = cart.subtotal || 0;
+  const userAddress = cart.user?.address || user?.address;
+  const userImage = cart.user?.image || user?.image;
+
+  // Fetch cart and user details when component mounts
+  useEffect(() => {
+    dispatch(fetchCart());
+    dispatch(fetchUserProfile());
+  }, [dispatch]);
 
   // Logout Functionality
   const logout = async () => {
     await UserLogout();
     navigate('/');
   };
-
-   // Fetch User Profile 
-    const fetchUser = async () => {
-      try {
-        const response = await axiosInstance({
-          url: '/user/profile',
-          method: 'GET',
-          withCredentials: true,
-        });
-        setUser(response?.data?.data);
-
-        console.log(response,"=====user")
-      } catch (error) {
-        console.log('Error fetching profile pic');
-      }
-    };
-  
-    useEffect(() => {
-      fetchUser();
-    }, []);
-  
-  
-// fetch cart details, need to replace when REDUX is introduced
-
-  useEffect(() => {
-    const fetchCartItems = async () => {
-      try {
-        const response = await axiosInstance({
-          url: "cart/active",
-          method: "GET",
-          withCredentials: true,
-        });
-        setCartDetails(response?.data);
-        setCartItems(response?.data?.cart?.items || []);
-        setCartTotal(response?.data?.cart?.subtotal)
-        setUserDetails(response?.data?.cart?.user);
-      } catch (error) {
-        toast.error("Failed to load cart: Try later");
-        console.log(error);
-      }
-    };
-  
-    fetchCartItems();
-  }, []);
-
-
-
 
   const handleAddressChange = (e) => {
     const selectedOption = e.target.value;
@@ -86,7 +51,7 @@ export const Header = () => {
           />
         </Link>
 
-        {/* Search and Location (Hidden on small screens) */}
+        {/* Search and Location */}
         <div className="hidden md:flex flex-row gap-5 px-5">
           <div className="form-control">
             <input
@@ -95,23 +60,17 @@ export const Header = () => {
               className="input input-bordered w-24 md:w-44"
             />
           </div>
+
           <select
-      className="bg-white select select-ghost max-w-50"
-      defaultValue="default"
-      onChange={handleAddressChange}
-    >
-      {/* User's current address */}
-
-      <option value="default" disabled>
-          {userDetails?.address || user?.address || 'No Address Available'}
-        </option>
-
-      {/* Add Address option */}
-      <option value="addAddress">Add Location</option>
-    </select>
-  
-
-
+            className="bg-white select select-ghost max-w-50"
+            defaultValue="default"
+            onChange={handleAddressChange}
+          >
+            <option value="default" disabled>
+              {userAddress || 'No Address Available'}
+            </option>
+            <option value="addAddress">Add Location</option>
+          </select>
         </div>
 
         {/* Dark Mode Toggle */}
@@ -142,76 +101,35 @@ export const Header = () => {
             <div className="card-body">
               <span className="text-lg font-bold">{cartItems.length} Items</span>
               <span className="text-slate-800 font-medium">
-                    Subtotal: ₹ { (cartTotal || 0).toFixed(2) }
+                Subtotal: ₹ {cartTotal.toFixed(2)}
               </span>
               <div className="card-actions">
                 <Link to={'/user/cart'}>
-                  <button className="btn btn-primary text-white btn-block">View cart</button>
+                  <button className="btn btn-primary btn-block">View cart</button>
                 </Link>
               </div>
             </div>
           </div>
         </div>
 
-        {/* User Profile with Dropdown */}
+        {/* User Profile & Logout */}
         <div className="dropdown dropdown-end">
-          <div tabIndex={0} role="button" className="btn btn-ghost btn-circle avatar">
+          <label tabIndex={0} className="btn btn-ghost btn-circle avatar">
             <div className="w-10 rounded-full">
-              <img
-                alt="Profile avatar"
-                src={
-                  userDetails?.image || // Cart profile picture
-                  user?.image || // Fallback to user profile pic from user data
-                  'https://res.cloudinary.com/aw96/image/upload/v1723432338/depositphotos_137014128-stock-illustration-user-profile-icon_a3ghy1.webp' // Default placeholder
-                }
-              />
+              <img src={userImage || 'https://placeimg.com/80/80/people'} alt="User Avatar" />
             </div>
-          </div>
-          <ul
-            tabIndex={0}
-            className="menu menu-sm dropdown-content bg-base-100 rounded-box z-[1] mt-3 w-52 p-2 shadow"
-          >
+          </label>
+          <ul tabIndex={0} className="mt-3 p-2 shadow menu menu-sm dropdown-content bg-base-100 rounded-box w-52 z-[1]">
             <li>
               <Link to={'/user/my-profile'} className="justify-between">
                 Profile
               </Link>
             </li>
             <li>
-              <Link to={'/user/order-history'} className="justify-between">
-                Orders
-              </Link>
-            </li>
-            <li>
-              <Link onClick={logout}>Logout</Link>
+              <button onClick={logout}>Logout</button>
             </li>
           </ul>
         </div>
-      </div>
-
-      {/* Search and Location for Mobile */}
-      <div className="header3 md:hidden flex flex-row justify-center py-5 mx-auto gap-5">
-        <div className="form-control">
-          <input
-            type="text"
-            placeholder="Search"
-            className="input input-bordered w-24 md:w-44"
-          />
-        </div>
-        <select
-    className="bg-white select select-ghost max-w-40"
-    defaultValue="default"
-    onChange={handleAddressChange}
-  >
-    {/* User's current address */}
-    <option value="default" disabled>
-  {userDetails?.address || user?.address || 'No Address Available'}
-</option>
-
-
-    {/* Add Address option */}
-    <option value="addAddress">Add Address</option>
-  </select>
-
       </div>
     </main>
   );
