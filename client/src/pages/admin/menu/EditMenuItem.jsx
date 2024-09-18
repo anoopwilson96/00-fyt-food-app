@@ -3,7 +3,6 @@ import { useForm, useFieldArray } from 'react-hook-form';
 import toast from 'react-hot-toast';
 import { useNavigate, useParams } from 'react-router-dom';
 import { getOneMenuItem, updateMenuItemAPI, deleteMenuItemAPI } from '../../../services/menuItemsAPI';
-import { axiosInstance } from '../../../config/axiosInstance';
 
 export const EditMenuItem = () => {
   const { id } = useParams(); // Get menu item ID from the URL
@@ -35,8 +34,8 @@ export const EditMenuItem = () => {
         reset({
           name: menuItem.name,
           description: menuItem.description,
-          restaurant: menuItem.restaurant.map((res) => ({ id: res._id })),
-          dish: menuItem.dish.map((item) => ({ id: item._id, name: item.name })),
+          restaurant: menuItem.restaurant.map((res) => ({ id: res._id, name: res.name })), // Include restaurant names
+          dish: menuItem.dish.map((item) => ({ id: item._id, name: item.name })), // Include dish names
         });
 
         setCurrentImage(menuItem.image); // Set current image URL
@@ -68,16 +67,11 @@ export const EditMenuItem = () => {
         formData.append('image', imageFile);
       }
 
-      console.log('Form Data being submitted:', formData);
-
       const response = await updateMenuItemAPI(formData, id);
-      console.log(response, 'Menu item updated successfully');
-
       toast.success('Menu item updated successfully');
       navigate('/admin/manage-menu');
     } catch (error) {
       toast.error('Failed to update menu item, try later');
-      console.log(error, '=== failed to update');
     }
   };
 
@@ -85,12 +79,10 @@ export const EditMenuItem = () => {
   const deleteThis = async (id) => {
     try {
       const response = await deleteMenuItemAPI(id);
-      console.log(response);
       toast.success('Menu item deleted');
       navigate('/admin/manage-menu');
     } catch (error) {
       toast.error('Failed to delete menu item');
-      console.log(error, '=== delete failed');
     }
   };
 
@@ -140,29 +132,32 @@ export const EditMenuItem = () => {
           )}
         </div>
 
-        {/* Restaurant IDs */}
+        {/* Restaurant Names */}
         <div className="mb-4">
-          <label htmlFor="restaurant" className="block text-lg font-medium">Restaurant (IDs)</label>
-          <input
-            type="text"
-            id="restaurant"
-            {...register('restaurant[0].id', { required: 'At least one restaurant is required' })}
-            placeholder="Enter restaurant ID"
-            className={`input input-bordered w-full ${errors.restaurant ? 'border-red-500' : ''}`}
-          />
+          <label htmlFor="restaurant" className="block text-lg font-medium">Restaurant</label>
           {errors.restaurant && <p className="text-red-500 text-sm">{errors.restaurant.message}</p>}
+          {dishFields.map((field, index) => (
+            <div key={field.id} className="mb-2">
+              <input
+                type="text"
+                {...register(`restaurant.${index}.name`)} // Display restaurant name
+                className="input input-bordered w-full"
+                disabled
+              />
+            </div>
+          ))}
         </div>
 
-        {/* Dishes (Multiple) */}
+        {/* Dishes */}
         <div className="mb-4">
           <label htmlFor="dish" className="block text-lg font-medium">Dishes</label>
           {dishFields.map((field, index) => (
             <div key={field.id} className="flex items-center space-x-2 mb-2">
               <input
                 type="text"
-                {...register(`dish.${index}.id`, { required: 'Dish ID is required' })}
-                placeholder="Enter dish ID"
+                {...register(`dish.${index}.name`)} // Display dish name
                 className="input input-bordered w-full"
+                disabled
               />
               <button
                 type="button"
@@ -173,13 +168,6 @@ export const EditMenuItem = () => {
               </button>
             </div>
           ))}
-          <button
-            type="button"
-            onClick={() => appendDish({ id: '' })}  // Append a blank object with 'id' property
-            className="bg-blue-500 text-white px-6 py-2 rounded-lg shadow hover:bg-blue-600 transition-all"
-          >
-            Add Dish
-          </button>
         </div>
 
         {/* Submit Button */}
