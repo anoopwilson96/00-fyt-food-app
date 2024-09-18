@@ -1,11 +1,29 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import toast from 'react-hot-toast';
 import { axiosInstance } from '../config/axiosInstance';
 import { useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { updateCart, fetchCart } from '../services/cartSlice';
+
 
 export const DishesCard = ({ dish, restaurantId }) => {
-  const [quantity, setQuantity] = useState(0); 
-  const navigate = useNavigate()
+  const [quantity, setQuantity] = useState(0);
+  const navigate = useNavigate();
+  const dispatch = useDispatch()
+
+  // Load quantity from localStorage on component mount
+  useEffect(() => {
+    const storedQuantity = localStorage.getItem(`dish-${dish._id}-quantity`);
+    if (storedQuantity) {
+      setQuantity(parseInt(storedQuantity, 10));
+    }
+  }, [dish._id]);
+
+  // Save quantity to localStorage whenever it changes
+  useEffect(() => {
+    localStorage.setItem(`dish-${dish._id}-quantity`, quantity);
+  }, [quantity, dish._id]);
+
   const handleIncrease = () => setQuantity(quantity + 1);
   const handleDecrease = () => {
     if (quantity >= 1) {
@@ -20,35 +38,45 @@ export const DishesCard = ({ dish, restaurantId }) => {
     }
 
     try {
-      // Fetch the active cart to check for restaurant conflict
+      // Fetch the active cart
       const cartResponse = await axiosInstance.get('/cart/active', { withCredentials: true });
       const currentCart = cartResponse.data.cart;
 
       // Check if the cart exists and if it's from a different restaurant
       if (currentCart && currentCart.restaurant && currentCart.restaurant._id !== restaurantId) {
-        // Warn the user and ask for confirmation
         const confirmClear = window.confirm(
           'Another Restaurant items in cart.Continuing will empty those items. Proceed?'
         );
       
         if (!confirmClear) {
-          // Assuming currentCart.restaurant is an object with an _id field
           navigate(`/user/cart`);
-          return; // Exit if the user cancels
+          return;
         }
       }
-      
+
+      // Check if the dish is already in the cart and update its quantity
+      const existingCartItem = currentCart?.items?.find(item => item.dish._id === dish._id);
+
+      let newQuantity = quantity;
+      if (existingCartItem) {
+        newQuantity = quantity; // Replace old quantity with the new quantity
+      }
+
       // Prepare data to send to the backend
       const data = {
         dishId: dish._id,
-        quantity: quantity,
+        quantity: newQuantity,
         restaurantId: restaurantId
       };
+
       // Add to cart request
       const response = await axiosInstance.post('/cart/add', data, { withCredentials: true });
 
       if (response.data.success) {
         toast.success('Dish added to cart!');
+         dispatch(updateCart (response.data.cart));
+         dispatch(fetchCart());
+
       } else {
         toast.error(response.data.message || 'Failed to add to cart');
       }

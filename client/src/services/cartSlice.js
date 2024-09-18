@@ -29,10 +29,11 @@ const cartSlice = createSlice({
   },
   reducers: {
     // Actions to manually update the cart items or subtotal (if needed)
-    updateCartItems: (state, action) => {
-      state.items = action.payload.items;
+    updateCart: (state, action) => {
+      // state.items = action.payload.items;
       state.subtotal = action.payload.subtotal;
       state.total = action.payload.total;
+      state.restaurant = action.payload.restaurant;
     },
   },
   extraReducers: (builder) => {
@@ -54,6 +55,7 @@ const cartSlice = createSlice({
   },
 });
 
-export const { updateCartItems } = cartSlice.actions;
+// export const { updateCartItems } = cartSlice.actions;
+export const { updateCart } = cartSlice.actions;
 
 export default cartSlice.reducer;
