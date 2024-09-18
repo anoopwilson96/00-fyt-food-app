@@ -14,7 +14,7 @@ export const MenuItemsCard = ({items}) => {
           
             </div>
             <Link to={`menu-item/${items?._id}`}>
-            <p className='text-lg text-nowrap font-semibold flex items-center '>{items?.name}</p>
+            <p className='text-lg text-nowrap font-semibold flex items-center  hover:text-yellow-700 transition-colors duration-300 '>{items?.name}</p>
             </Link> 
         </div>
         

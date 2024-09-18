@@ -121,6 +121,11 @@ export const Header = () => {
           </label>
           <ul tabIndex={0} className="mt-3 p-2 shadow menu menu-sm dropdown-content bg-base-100 rounded-box w-52 z-[1]">
             <li>
+              <Link to={'/user/order-history'} className="justify-between">
+                Orders
+              </Link>
+            </li>
+            <li>
               <Link to={'/user/my-profile'} className="justify-between">
                 Profile
               </Link>
