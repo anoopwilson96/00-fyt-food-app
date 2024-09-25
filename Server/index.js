@@ -12,8 +12,8 @@ app.use(cors({
   origin: [
     "https://fyt-food-delivery.vercel.app",
     "http://localhost:5173",
-    "https://zero0-fyt-food-app.onrender.com"
-  ],
+    "http://localhost:5174",
+    ],
  credentials: true
 }))
 app.use(express.json())
