@@ -15,14 +15,14 @@ export const HomePage = () => {
     infinite: true,
     speed: 500,
     centerPadding: "60px",
-    slidesToShow: 8,
-    slidesToScroll: 4,
+    slidesToShow: 10,
+    slidesToScroll: 5,
     initialSlide: 4,
     responsive: [
       {
         breakpoint: 1024,
         settings: {
-          slidesToShow: 5,
+          slidesToShow: 6,
           slidesToScroll: 5,
           infinite: true,
           dots: true
