@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { DarkMode } from '../../UI/DarkMode';
 import { Link, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
@@ -6,30 +6,26 @@ import { fetchCart } from '../../services/cartSlice';
 import { fetchUserProfile } from '../../services/userSlice';
 import { UserLogout } from '../../services/userAPI';
 import toast from 'react-hot-toast';
+import { getAllRestaurants } from '../../services/restaurantAPI';
+import { getAllMenuItems } from '../../services/menuItemsAPI';
 
 export const Header = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const searchRef = useRef(null); // Create a ref for the search container
+
+  const [menuItems, setMenuItems] = useState([]);
+  const [restaurants, setRestaurants] = useState([]); 
+  const [searchQuery, setSearchQuery] = useState('');
+  const [searchResults, setSearchResults] = useState([]);
 
   const cart = useSelector((state) => state.cart);
   const user = useSelector((state) => state.user.details);
 
-  const cartItems = cart.items || [];
-  const cartTotal = cart.subtotal || 0;
-  const userAddress = cart.user?.address || user?.address;
-  const userImage = cart.user?.image || user?.image;
-
-  // Fetch cart and user details when component mounts
   useEffect(() => {
     dispatch(fetchCart());
     dispatch(fetchUserProfile());
   }, [dispatch]);
-
-  // Logout Functionality
-  const logout = async () => {
-    await UserLogout();
-    navigate('/');
-  };
 
   const handleAddressChange = (e) => {
     const selectedOption = e.target.value;
@@ -37,6 +33,91 @@ export const Header = () => {
       navigate('/user/my-profile'); // Navigate to add address section
     }
   };
+
+  const cartItems = cart.items || [];
+  const cartTotal = cart.subtotal || 0;
+  const userAddress = cart.user?.address || user?.address;
+  const userImage = cart.user?.image || user?.image;
+
+  // Logout Functionality
+  const logout = async () => {
+    await UserLogout();
+    navigate('/');
+  };
+
+  useEffect(() => {
+    const getData = async () => {
+      try {
+        const restaurantData = await getAllRestaurants();
+        if (restaurantData) {
+          setRestaurants(restaurantData);
+        } else {
+          toast.error("Failed to fetch restaurants");
+        }
+
+        const menuItemData = await getAllMenuItems();
+        if (menuItemData) {
+          setMenuItems(menuItemData);
+        } else {
+          toast.error("No menu items received");
+        }
+      } catch (error) {
+        toast.error("Error in fetching data");
+        console.log(error);
+      }
+    };
+    getData();
+  }, []);
+
+  const handleSearch = (query) => {
+    setSearchQuery(query);
+
+    // Set the minimum character limit for search
+    const minChars = 2;
+    if (query.trim().length < minChars) {
+        setSearchResults([]); // Clear results if less than 3 characters
+        return;
+    }
+
+    // Filter menu items and restaurants based on the query
+    const filteredMenuItems = menuItems.filter(item =>
+        item.name.toLowerCase().includes(query.toLowerCase())
+    );
+
+    const filteredRestaurants = restaurants.filter(restaurant =>
+        restaurant.name.toLowerCase().includes(query.toLowerCase())
+    );
+
+    // Combine results and limit the total number of results (e.g., to 10)
+    const combinedResults = [...filteredMenuItems, ...filteredRestaurants];
+    const maxResults = 10; // Set maximum number of results to display
+    setSearchResults(combinedResults.slice(0, maxResults)); // Limit results to maxResults
+};
+
+  const navigateToResult = (result) => {
+    if (result.cuisine) {
+      navigate(`/user/restaurant/${result._id}`);
+    } else if (result.description || result.dish) {
+      navigate(`/user/menu-item/${result._id}`);
+    }
+    setSearchQuery('');
+    setSearchResults([]);
+  };
+
+  // Click Outside Handler
+  const handleClickOutside = (event) => {
+    if (searchRef.current && !searchRef.current.contains(event.target)) {
+      setSearchResults([]); // Clear search results
+      setSearchQuery(''); // Optionally clear the search query as well
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
 
   return (
     <main className="mx-auto bg-base-300">
@@ -52,25 +133,38 @@ export const Header = () => {
         </Link>
 
         {/* Search and Location */}
-        <div className="hidden md:flex flex-row gap-5 px-5">
-          <div className="form-control">
-            <input
-              type="text"
-              placeholder="Search"
-              className="input input-bordered w-24 md:w-44"
-            />
-          </div>
+        <div className="relative" ref={searchRef}> 
+          <div className="hidden md:flex flex-row gap-5 px-5">
+            <div className="form-control relative">
+              <input
+                type="text"
+                placeholder="Search"
+                value={searchQuery}
+                onChange={(e) => handleSearch(e.target.value)}
+                className="input input-bordered w-24 md:w-44 bg-white"
+              />
+              {searchResults.length > 0 && (
+                <div className="absolute top-full mt-3 w-full rounded-md  bg-white shadow-lg z-10">
+                  {searchResults.map(result => (
+                    <div key={result._id} onClick={() => navigateToResult(result)}>
+                      <h3 className="p-2 cursor-pointer">{result.name}</h3> 
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
 
-          <select
-            className="bg-white select select-ghost max-w-50"
-            defaultValue="default"
-            onChange={handleAddressChange}
-          >
-            <option value="default" disabled>
-              {userAddress || 'No Address Available'}
-            </option>
-            <option value="addAddress">Add Location</option>
-          </select>
+            <select
+              className="bg-white select select-ghost max-w-50"
+              defaultValue="default"
+              onChange={handleAddressChange}
+            >
+              <option value="default" disabled>
+                {userAddress || 'No Address Available'}
+              </option>
+              <option value="addAddress">Add Location</option>
+            </select>
+          </div>
         </div>
 
         {/* Dark Mode Toggle */}
@@ -134,6 +228,41 @@ export const Header = () => {
               <button onClick={logout}>Logout</button>
             </li>
           </ul>
+        </div>
+      </div>
+
+
+      {/* Mobile view */}
+      <div className="relative">
+        <div className="flex flex-row gap-5 px-5 md:hidden pb-4 mx-auto justify-center">
+          <div className="form-control relative">
+            <input
+              type="text"
+              placeholder="Search"
+              className="input input-bordered w-24 md:w-44"
+              onChange={(e) => handleSearch(e.target.value)}
+            />
+            {searchResults.length > 0 && (
+              <div className="absolute mt-2 top-full w-40 rounded-md  shadow-lg z-10">
+                {searchResults.map(result => (
+                  <h3 key={result._id} className="p-2 cursor-pointer" onClick={() => navigateToResult(result)}>
+                    {result.name}
+                  </h3>
+                ))}
+              </div>
+            )}
+          </div>
+
+          <select
+            className=" select select-ghost max-w-38"
+            defaultValue="default"
+            onChange={handleAddressChange}
+          >
+            <option value="default" disabled>
+              {userAddress || 'No Address Available'}
+            </option>
+            <option value="addAddress">Add Location</option>
+          </select>
         </div>
       </div>
     </main>
