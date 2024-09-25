@@ -45,7 +45,7 @@ export const DishesCard = ({ dish, restaurantId }) => {
       // Check if the cart exists and if it's from a different restaurant
       if (currentCart && currentCart.restaurant && currentCart.restaurant._id !== restaurantId) {
         const confirmClear = window.confirm(
-          'Another Restaurant items in cart.Continuing will empty those items. Proceed?'
+          'Current cart will be cleared. Proceed?'
         );
       
         if (!confirmClear) {
@@ -87,7 +87,7 @@ export const DishesCard = ({ dish, restaurantId }) => {
   };
 
   return (
-    <div className="mx-auto bg-white shadow-lg rounded-lg overflow-hidden sm:flex sm:flex-col md:flex-col max-w-full">
+    <div className="mx-auto  shadow-lg rounded-lg overflow-hidden sm:flex sm:flex-col md:flex-col max-w-full">
       <img className="w-96 h-48 object-cover" src={dish?.image} alt={dish?.name} />
       <div className="p-4 flex flex-col align-middle items-center justify-between flex-1">
         <div>

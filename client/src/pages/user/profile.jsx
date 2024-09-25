@@ -61,8 +61,8 @@ const getUserData = async () => {
   return (
     <>
       {/* Section 1: Profile Display */}
-      <div className="section1 bg-gray-100 p-10">
-        <div className="max-w-md mb-10 mt-10 mx-auto bg-white p-8 rounded-lg shadow-md border border-gray-200">
+      <div className="section1  p-10">
+        <div className="max-w-md mb-10 mt-10 mx-auto bg-gray-300 p-8 rounded-lg shadow-md border border-gray-200">
           <h2 className="text-3xl font-semibold text-center mb-10 text-gray-500"> {user?.name ? `${user?.name}'s` : 'Your'} Profile  </h2>
 
           <div className="flex flex-col items-center">
@@ -95,8 +95,8 @@ const getUserData = async () => {
 
       {/* Section 2: Edit Profile Form */}
       {isEditing && (
-        <div className="section2 bg-gray-50 py-10">
-          <div className="max-w-lg mx-auto bg-white p-8 rounded-lg shadow-lg border border-gray-200">
+        <div className="section2  py-10">
+          <div className="max-w-lg mx-auto bg-gray-300 p-8 rounded-lg shadow-lg border border-gray-200">
             <h3 className="text-2xl font-bold mb-6 text-gray-800">Edit Profile</h3>
             <form onSubmit={handleSubmit(onSubmit)} encType="multipart/form-data" className="space-y-4">
               <div className="mb-4">

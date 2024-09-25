@@ -221,8 +221,8 @@ export const CartPage = () => {
   const addressExists = userDetails && userDetails.address;
 
   return (
-    <div className="flex flex-col items-center justify-center p-6 md:p-12 bg-gray-100 min-h-screen">
-      <h1 className="text-4xl font-bold mb-8 text-gray-800">Your Cart</h1>
+    <div className="flex flex-col items-center justify-center p-6 md:p-12 min-h-screen">
+      <h1 className="text-4xl font-bold mb-8 text-gray-600">Your Cart</h1>
 
       {/* Cart Items */}
       <div className="w-full md:w-2/3 bg-white rounded-lg shadow-md p-6 mb-8">

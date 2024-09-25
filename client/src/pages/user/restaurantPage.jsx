@@ -27,10 +27,10 @@ export const RestaurantPage = () => {
   }, [id]);
 
   return (
-    <main className='bg-gray-50'>
+    <main className=''>
       {/* <Link to={"/user"} ><IoArrowBackCircleOutline size={30} /></Link> */}
      
-      <section className="grid lg:grid-cols-2 grid-cols-1 max-w-7xl mx-auto gap-8 p-6 bg-gray-50">
+      <section className="grid lg:grid-cols-2 grid-cols-1 max-w-7xl mx-auto gap-8 p-6 ">
         <div className="card bg-base-100 shadow-lg rounded-lg overflow-hidden">
           <figure className="flex justify-center items-center bg-green-50 p-2">
             <img
