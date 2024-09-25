@@ -239,11 +239,11 @@ export const Header = () => {
             <input
               type="text"
               placeholder="Search"
-              className="input input-bordered w-24 md:w-44"
+              className="input input-bordered w-24 md:w-44 bg-white"
               onChange={(e) => handleSearch(e.target.value)}
             />
             {searchResults.length > 0 && (
-              <div className="absolute mt-2 top-full w-40 rounded-md  shadow-lg z-10">
+              <div className="absolute mt-2 top-full w-40 rounded-md bg-white shadow-lg z-10">
                 {searchResults.map(result => (
                   <h3 key={result._id} className="p-2 cursor-pointer" onClick={() => navigateToResult(result)}>
                     {result.name}
@@ -254,7 +254,7 @@ export const Header = () => {
           </div>
 
           <select
-            className=" select select-ghost max-w-38"
+            className=" select select-ghost max-w-38 bg-white"
             defaultValue="default"
             onChange={handleAddressChange}
           >
