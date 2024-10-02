@@ -4,6 +4,7 @@ import { imageUploadCloudinary } from "../utils/cloudinaryUpload.js";
 import {Dish} from "../models/dishModel.js"
 import multer from "multer";
 import mongoose from 'mongoose';
+import { MenuItem } from "../models/menuItemModel.js";
 
 
 export const addRestaurant = async (req, res, next) => {
@@ -27,7 +28,7 @@ export const addRestaurant = async (req, res, next) => {
       phone,
       rating,
       image: imageUrl || image,
-      menuItems
+  
     });
 
     // Update menuItems if provided
@@ -109,49 +110,54 @@ export const deleteRestaurant = async (req, res, next) => {
 };
 
 
-
-
-
 export const updateRestaurant = async (req, res, next) => {
   try {
-    const { id } = req.params;
-    const { name, cuisine, location, phone, rating, image, menuItems } = req.body;
+    const { id } = req.params; // Get restaurant ID from request parameters
+    const { name, cuisine, location, phone, rating, addMenuItems, removeMenuItems, image } = req.body;
 
-    // Upload new image to Cloudinary if a file is provided
-    const imageUrl = req.file ? await imageUploadCloudinary(req.file.path) : image;
+    console.log(req.body, "Request Body =", req.params);
 
-    // Fetch existing restaurant
+    // Find the restaurant by ID
     const restaurant = await Restaurant.findById(id);
     if (!restaurant) {
       return res.status(404).json({ success: false, message: "Restaurant not found" });
     }
 
-    // Update fields
+    // Upload new image to Cloudinary if a new file is provided
+    let imageUrl = image;
+    if (req.file) {
+      imageUrl = await imageUploadCloudinary(req.file.path); // Cloudinary image upload
+    }
+
+    
+    // Update restaurant fields if provided in the request body
     restaurant.name = name || restaurant.name;
     restaurant.cuisine = cuisine || restaurant.cuisine;
     restaurant.location = location || restaurant.location;
     restaurant.phone = phone || restaurant.phone;
     restaurant.rating = rating || restaurant.rating;
-    restaurant.image = imageUrl || restaurant.image;
+    if (imageUrl) restaurant.image = imageUrl; // Update the image URL if applicable
 
-    // Handle menuItems
-    if (Array.isArray(menuItems)) {
-      // Convert strings to ObjectId instances
-      const validMenuItems = menuItems
-        .map(item => mongoose.Types.ObjectId.isValid(item) ? mongoose.Types.ObjectId(item) : null)
-        .filter(item => item !== null);
-
-      // Merge and update menuItems
-      restaurant.menuItems = Array.from(new Set([...restaurant.menuItems, ...validMenuItems]));
+    // Handle menu item additions
+    if (addMenuItems && Array.isArray(addMenuItems)) {
+      addMenuItems.forEach(item => {
+        if (!restaurant.menuItems.includes(item)) {
+          restaurant.menuItems.push(item); // Add only unique menu items
+        }
+      });
     }
 
-    // Save updated restaurant
+    // Handle menu item removals
+    if (removeMenuItems && Array.isArray(removeMenuItems)) {
+      restaurant.menuItems = restaurant.menuItems.filter(item => !removeMenuItems.includes(item.toString())); // Remove specified items
+    }
+
+    // Save the updated restaurant to the database
     await restaurant.save();
 
     res.status(200).json({ success: true, message: "Restaurant updated successfully", data: restaurant });
-
   } catch (error) {
-    console.error(error); // Log the error for debugging purposes
-    res.status(error.status || 500).json({ message: error.message || "Internal server error" });
+    console.error("Error updating restaurant:", error);
+    res.status(error.status || 500).json({ success: false, message: error.message || "Internal server error" });
   }
 };

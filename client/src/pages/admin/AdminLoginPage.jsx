@@ -69,7 +69,7 @@ export const AdminLoginPage = () => {
     <div className="text-center lg:text-left">
       <h1 className="text-5xl font-bold">Login now!</h1>
       <p className="py-6">
-      Log in to access your personalized menu, track your orders, and enjoy exclusive deals. Let’s get you closer to that perfect meal!
+      Log in to Admin Panel
       </p>
     </div>
     <div className="card bg-base-100 w-3xl max-w-sm shrink-0 shadow-2xl">

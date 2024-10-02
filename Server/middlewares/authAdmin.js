@@ -15,7 +15,7 @@ export const authAdmin = (req,res,next)=>{
     
     const tokenVerified = jwt.verify(token,process.env.JWT_SK)
 
-    console.log(tokenVerified);
+    // console.log(tokenVerified);
     
   
     if (!tokenVerified ) {

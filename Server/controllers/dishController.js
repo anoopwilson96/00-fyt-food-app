@@ -92,9 +92,9 @@ export const updateDish = async (req, res, next) => {
     const imageUrl = req.file ? await imageUploadCloudinary(req.file.path) : image;
 
     // Update dish details
+    
     const updatedDish = await Dish.findByIdAndUpdate(
       id,
-
       {
         name,
         description,

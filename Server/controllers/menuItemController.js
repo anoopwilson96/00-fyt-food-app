@@ -43,8 +43,8 @@ export const getMenuItem = async (req, res, next) => {
     const { id } = req.params;
    
     const menuItem = await MenuItem.findById(id).populate('restaurant')
-      // .populate('restaurant')
-      // .populate('dish');
+      .populate('restaurant')
+      .populate('dish');
 
     if (!menuItem) {
       return res.status(404).json({ success: false, message: "Menu Item not found" });
@@ -56,7 +56,6 @@ export const getMenuItem = async (req, res, next) => {
     res.status(error.status || 500).json({ message: error.message || "Internal server error" });
   }
 };
-
 
 // Get All Menu Items
 export const getAllMenuItems = async (req, res, next) => {
@@ -78,62 +77,11 @@ export const getAllMenuItems = async (req, res, next) => {
 
 
 
-// Update a Menu Item by ID using findByIdAndUpdate
-export const updateMenuItem = async (req, res, next) => {
-  try {
-    const { id } = req.params;
-    const { name, description, restaurant, dish, image } = req.body;
-    console.log(id)
-    console.log(req.body)
-    
-
-    // Upload new image to Cloudinary if a file is provided
-    const imageUrl = req.file ? await imageUploadCloudinary(req.file.path) : image;
-
-    // Fetch existing Menu Item
-    const existingMenuItem = await MenuItem.findById(id);
-    if (!existingMenuItem) {
-      return res.status(404).json({ success: false, message: "Menu Item not found" });
-    }
-
-    // Validate that restaurant and dish are arrays, if provided
-    const updatedRestaurant = Array.isArray(restaurant) ? restaurant : existingMenuItem.restaurant;
-    const updatedDish = Array.isArray(dish) ? dish : [dish].filter(Boolean); // Ensure dish is an array
-
-    // Push new IDs to existing arrays
-    const newRestaurantIds = new Set([...existingMenuItem.restaurant, ...updatedRestaurant]);
-    const newDishIds = new Set([...existingMenuItem.dish, ...updatedDish]);
-
-    // Update Menu Item details
-    const updatedMenuItem = await MenuItem.findByIdAndUpdate(
-      id,
-      {
-        name: name || existingMenuItem.name,
-        description: description || existingMenuItem.description,
-        restaurant: [...newRestaurantIds],
-        dish: [...newDishIds],
-        image: imageUrl || existingMenuItem.image,
-      },
-      { new: true } // Return the updated document
-    );
-
-    if (!updatedMenuItem) {
-      return res.status(404).json({ success: false, message: "Menu Item not found" });
-    }
-
-    res.status(200).json({ success: true, message: "Menu Item updated successfully", data: updatedMenuItem });
-
-  } catch (error) {
-    console.error(error); // Log the error for debugging purposes
-    res.status(error.status || 500).json({ message: error.message || "Internal server error" });
-  }
-};
-
 
 // Delete a Menu Item by ID
 export const deleteMenuItem = async (req, res, next) => {
   try {
-    const { id } = req.params;
+    const { id } = req.body;
     console.log(id)
 
     // Find and delete the menu item by ID
@@ -147,5 +95,72 @@ export const deleteMenuItem = async (req, res, next) => {
   } catch (error) {
     console.error(error); // Log the error for debugging purposes
     res.status(error.status || 500).json({ message: error.message || "Internal server error" });
+  }
+};
+
+
+
+
+// Update a Menu Item by ID 
+
+export const updateMenuItem = async (req, res, next) => {
+  try {
+    const { id } = req.params; // Get menu item ID from request parameters
+    const { name, description, addRestaurants, removeRestaurants, addDishes, removeDishes, image } = req.body;
+
+    console.log(req.body, "Request Body =", req.params);
+
+    // Find the menu item by ID
+    const menuItem = await MenuItem.findById(id);
+    if (!menuItem) {
+      return res.status(404).json({ success: false, message: "Menu Item not found" });
+    }
+
+    // Upload new image to Cloudinary if a new file is provided
+    let imageUrl = image;
+    if (req.file) {
+      imageUrl = await imageUploadCloudinary(req.file.path); // Cloudinary image upload
+    }
+
+    // Update menu item fields if provided in the request body
+    menuItem.name = name || menuItem.name;
+    menuItem.description = description || menuItem.description;
+    if (imageUrl) menuItem.image = imageUrl; // Update image URL if applicable
+
+    // Handle restaurant additions
+    if (addRestaurants && Array.isArray(addRestaurants)) {
+      addRestaurants.forEach(restaurantId => {
+        if (!menuItem.restaurant.includes(restaurantId)) {
+          menuItem.restaurant.push(restaurantId); // Add only unique restaurant references
+        }
+      });
+    }
+
+    // Handle restaurant removals
+    if (removeRestaurants && Array.isArray(removeRestaurants)) {
+      menuItem.restaurant = menuItem.restaurant.filter(restaurantId => !removeRestaurants.includes(restaurantId.toString()));
+    }
+
+    // Handle dish additions
+    if (addDishes && Array.isArray(addDishes)) {
+      addDishes.forEach(dishId => {
+        if (!menuItem.dish.includes(dishId)) {
+          menuItem.dish.push(dishId); // Add only unique dish references
+        }
+      });
+    }
+
+    // Handle dish removals
+    if (removeDishes && Array.isArray(removeDishes)) {
+      menuItem.dish = menuItem.dish.filter(dishId => !removeDishes.includes(dishId.toString()));
+    }
+
+    // Save the updated menu item to the database
+    await menuItem.save();
+
+    res.status(200).json({ success: true, message: "Menu Item updated successfully", data: menuItem });
+  } catch (error) {
+    console.error("Error updating menu item:", error);
+    res.status(error.status || 500).json({ success: false, message: error.message || "Internal server error" });
   }
 };
