@@ -31,11 +31,6 @@ export const HomepageLanding = () => {
   </div>
   <div className="carousel-item max-w-2xl max-h-96">
     <img
-      src="https://res.cloudinary.com/aw96/image/upload/v1724661744/photo-1593759608142-e9b18c0dbe86_wrkjjz.jpg"
-      alt="Drink" />
-  </div>
-  <div className="carousel-item max-w-2xl max-h-96">
-    <img
       src="https://res.cloudinary.com/aw96/image/upload/v1724661687/photo-1652862730749-31dae8981191_h7lhvd.jpg"
       alt="Drink" />
   </div>

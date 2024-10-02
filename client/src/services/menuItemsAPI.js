@@ -10,6 +10,7 @@ try {
     url:'/menu-item/all',
     method:'GET'
   })
+
 return response?.data?.data   
 } catch (error) {
   console.log(error);
@@ -21,24 +22,27 @@ return response?.data?.data
 export const getOneMenuItem = async (id) => {
   try {
     const response = await axiosInstance.get(`/menu-item/get/${id}`);
-    return response.data.data;  // Assuming the response follows { success: true, data: {} } pattern
+    return (response?.data?.data || []); 
+
   } catch (error) {
     throw error;
   }
 };
 
-// Update a menu item
-export const updateMenuItemAPI = async (formData, id) => {
-  try {
-    const response = await axiosInstance.patch(`/menu-item/update/${id}`,formData, {
-      headers: { 'Content-Type': 'multipart/form-data' },withCredentials:true
-    });
-    return response.data;
-    console.log(id)
-  } catch (error) {
-    throw error;
-  }
-};
+// export const updateMenuItemAPI = async (id, formData) => {
+//   try {
+//     const response = await axiosInstance.patch(`/menu-item/update/${id}`, formData,{withCredentials: true}, {
+//       headers: {
+//         "Content-Type": "multipart/form-data",
+//       },
+//     });
+//     return response.data;
+//   } catch (error) {
+//     console.error("Error updating menu item", error);
+//     throw error;
+//   }
+// };
+
 
 // Delete a menu item by ID
 export const deleteMenuItemAPI = async (id) => {
@@ -68,6 +72,7 @@ export const  AddMenuItemsAPI = async (formData)=>{
       data:formData,
       withCredentials: true
     })
+ 
     return response
   } catch (error) {
     console.error(error,"Failed Add axios")

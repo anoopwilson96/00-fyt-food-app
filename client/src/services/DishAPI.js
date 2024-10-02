@@ -6,20 +6,28 @@ import { useParams } from 'react-router-dom';
 // Get all dishes
 export const getAllDishesAPI = async () => {
   const response = await axiosInstance({
-    url:"dish/all",
+    url:"/dish/all",
     method: "GET"
   })
-  return response.data;
+  console.log( response?.data?.data )
+  return ( response?.data?.data || []);
 };
 
 // Get a single dish by ID
 export const getDishAPI = async (id) => {
-  console.log(id)
+  
+try {
   const response = await axiosInstance({
     url: `/dish/get/${id}`,
     method: "GET",
   })
-  return response.data;
+  console.log(response.data.data)
+  return response.data.data;
+  
+  
+} catch (error) {
+ console.log(error,"Axios error")
+}
 };
 
 // Add a new dish
@@ -42,13 +50,13 @@ export const addDishAPI = async (dishData) => {
 };
 
 // Update a dish by ID
-export const updateDishAPI = async (id, dishData) => {
+export const updateDishAPI = async (id,formData) => {
   try {
-    console.log(dishData)
+    console.log(formData)
     const response = await axiosInstance({
       url:`/dish/update/${id}`,
       method:"PATCH",
-      data: dishData,
+      data: formData,
       withCredentials:true
     })
     return response.data;

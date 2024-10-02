@@ -11,7 +11,7 @@ export const DishesAdmin = () => {
     const fetchDishes = async () => {
       try {
         const response = await getAllDishesAPI();
-        setDishes(response.data); 
+        setDishes(response); 
       } catch (error) {
         console.error('Error fetching dishes:', error);
       }

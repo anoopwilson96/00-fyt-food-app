@@ -26,6 +26,7 @@ export const getOneRestaurant = async (id)=>{
       url:`/restaurant/get/${id}`,
       method: "GET"
     })
+    console.log(response.data.data)
     return response?.data?.data
   } catch (error) {
     console.log(error,"=== Error in axios fetching restaurant")
@@ -49,18 +50,3 @@ export const AddRestaurantAPI = async(data)=>{
   }
 }
 
-// Edit restaurant
-
-export const updateRestaurantAPI = async (formData,id)=>{
-  try {
-    const response = await axiosInstance({
-      url: `/restaurant/update/${id}`,
-      method:"PATCH",
-      data: formData,
-      withCredentials:true
-    })
-    return response
-  } catch (error) {
-    console.log(error,"===axios error")
-  }
-}

@@ -1,250 +1,284 @@
-import React, { useState, useEffect } from 'react';
-import { useForm, useFieldArray } from 'react-hook-form';
-import toast from 'react-hot-toast';
-import { useNavigate, useParams } from 'react-router-dom';
-import { getOneRestaurant, updateRestaurantAPI } from '../../../services/restaurantAPI';
-import { axiosInstance } from '../../../config/axiosInstance';
+import React, { useState, useEffect } from "react";
+import { useForm } from "react-hook-form";
+import { useNavigate, useParams } from "react-router-dom";
+import { getOneRestaurant } from "../../../services/restaurantAPI";
+import { axiosInstance } from "../../../config/axiosInstance";
+import toast from "react-hot-toast";
+import "tailwindcss/tailwind.css"; // Include Tailwind CSS for styling
 
-export const EditRestaurant = () => {
-  const { id } = useParams(); // Get restaurant ID from the URL
+const EditRestaurant = () => {
+  const { id } = useParams();
   const navigate = useNavigate();
-  const {
-    register,
-    handleSubmit,
-    control,
-    formState: { errors },
-    reset,
-  } = useForm();
+  const [restaurantData, setRestaurantData] = useState(null);
+  const [menuItems, setMenuItems] = useState([]);
+  const [selectedMenuItems, setSelectedMenuItems] = useState([]); // New menu items to add
+  const [selectedRemoveMenuItems, setSelectedRemoveMenuItems] = useState([]); // Menu items to remove
+  const [imageFile, setImageFile] = useState(null);
+  const { register, handleSubmit, reset } = useForm();
 
-  // Hook for handling multiple menu items
-  const { fields, append, remove } = useFieldArray({
-    control,
-    name: 'menuItems',
-  });
-
-  const [imageFile, setImageFile] = useState(null); // Image upload state
-  const [currentImage, setCurrentImage] = useState(''); // Current image URL state
-
-  // Fetch the restaurant data when the component loads
+  // Fetch available menu items for selection
   useEffect(() => {
-    const fetchRestaurant = async () => {
+    const fetchData = async () => {
       try {
-        const restaurant = await getOneRestaurant(id); // Fetch restaurant by ID
-
-        // Reset the form with the fetched restaurant data
-        reset({
-          name: restaurant.name,
-          cuisine: restaurant.cuisine,
-          location: restaurant.location,
-          phone: restaurant.phone,
-          rating: restaurant.rating,
-          menuItems: restaurant.menuItems.map((item) => ({ menuItem: item })),
-        });
-
-        setCurrentImage(restaurant.image); // Set current image URL
+        const response = await axiosInstance.get("/menu-item/all");
+        setMenuItems(response?.data?.data);
       } catch (error) {
-        toast.error('Failed to load restaurant data');
+        console.log(error, "Failed to fetch menu items");
       }
     };
+    fetchData();
+  }, []);
 
+  // Fetch restaurant data by ID
+  useEffect(() => {
+    const fetchRestaurant = async () => {
+      const data = await getOneRestaurant(id);
+      if (data) {
+        setRestaurantData(data);
+        reset({
+          name: data.name,
+          cuisine: data.cuisine,
+          location: data.location,
+          phone: data.phone,
+          rating: data.rating,
+          menuItems: data.menuItems.map((item) => ({
+            id: item._id,
+            name: item.name,
+          })), // Current menu items
+        });
+      }
+    };
     fetchRestaurant();
   }, [id, reset]);
 
- 
-  const onSubmit = async (data) => {
+  // Handle image file change
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    setImageFile(file);
+  };
+
+  // Handle adding new menu items
+  const handleMenuItemChange = (e) => {
+    const selectedOptions = Array.from(
+      e.target.selectedOptions,
+      (option) => option.value
+    );
+    setSelectedMenuItems(selectedOptions);
+  };
+
+  // Handle removing menu items from the existing list (visual strike-through)
+  const handleRemoveMenuItem = (menuItemId) => {
+    setSelectedRemoveMenuItems((prev) => [...prev, menuItemId]);
+  };
+
+  // Handle form submission
+  const onSubmit = async (formData) => {
+    const updatedData = new FormData();
+    updatedData.append("name", formData.name);
+    updatedData.append("cuisine", formData.cuisine);
+    updatedData.append("location", formData.location);
+    updatedData.append("phone", formData.phone);
+    updatedData.append("rating", formData.rating);
+
+    selectedMenuItems.forEach((item, index) => {
+      updatedData.append(`addMenuItems[${index}]`, item);
+    });
+
+    selectedRemoveMenuItems.forEach((item, index) => {
+      updatedData.append(`removeMenuItems[${index}]`, item);
+    });
+
+    // Add image to the form data if an image is selected
+    if (imageFile) {
+      updatedData.append("image", imageFile);
+    }
+
     try {
-      const formData = new FormData();
-      formData.append('name', data.name);
-      formData.append('cuisine', data.cuisine);
-      formData.append('location', data.location);
-      formData.append('phone', data.phone);
-      formData.append('rating', data.rating);
-  
-      if (imageFile) {
-        formData.append('image', imageFile);
+      const response = await axiosInstance.patch(
+        `/restaurant/update/${id}`,
+        updatedData,
+        {
+          withCredentials: true,
+          headers: { "Content-Type": "multipart/form-data" },
+        }
+      );
+      if (response?.data?.success) {
+        toast.success("Restaurant updated successfully");
+        navigate("/admin/manage-restaurant");
       }
-  
-      // Ensure `menuItems` is formatted correctly
-      data.menuItems.forEach((item) => {
-        // Assuming `item.menuItem` is a string representation of an `ObjectId`
-        formData.append('menuItems[]', item.menuItem);
-      });
-  
-      console.log('Form Data being submitted:', formData);
-  
-      const response = await updateRestaurantAPI(formData, id);
-      console.log(response, 'Restaurant updated successfully');
-  
-      toast.success('Restaurant updated successfully');
-      navigate('/admin/manage-restaurant');
     } catch (error) {
-      toast.error('Failed to update restaurant, try later');
-      console.log(error, '=== failed to update');
+      toast.error("Failed to update restaurant");
+      console.log(error);
     }
   };
-  
-  //Delete restaurant
 
-  const deleteThis = async(id) =>{
+  // Handle delete restaurant
+  const deleteThis = async () => {
     try {
-
-      const response= await axiosInstance({
-        url: 'restaurant/delete',
-        method: "POST",
+      const response = await axiosInstance({
+        url: "/restaurant/delete",
+        method: "DELETE",
         withCredentials: true,
-        data: {id}
-      })
-    console.log(response)
-    toast.success("Restaurant deleted")
-    navigate('/admin/manage-restaurant')
-    
+        data: { id },
+      });
+      toast.success("Restaurant deleted");
+      navigate("/admin/manage-restaurant");
     } catch (error) {
-      toast.error("Failed to delete")
-      console.log(error,"=== delete axios failed")
+      toast.error("Failed to delete restaurant");
+      console.log(error);
     }
-  }
-
+  };
 
   return (
-    <div className="max-w-lg mt-10 mb-10  p-10 mx-auto  shadow-lg rounded-lg bg-white">
-      <h2 className="text-2xl font-bold mb-6">Edit Restaurant</h2>
-      <form onSubmit={handleSubmit(onSubmit)} encType="multipart/form-data">
-        {/* Restaurant Name */}
-        <div className="mb-4">
-          <label htmlFor="name" className="block text-lg font-medium">Name</label>
-          <input
-            type="text"
-            id="name"
-            {...register('name', { required: 'Restaurant name is required' })}
-            placeholder="Enter restaurant name"
-            className={`input input-bordered w-full ${errors.name ? 'border-red-500' : ''}`}
-          />
-          {errors.name && <p className="text-red-500 text-sm">{errors.name.message}</p>}
-        </div>
-
-        {/* Cuisine */}
-        <div className="mb-4">
-          <label htmlFor="cuisine" className="block text-lg font-medium">Cuisine</label>
-          <input
-            type="text"
-            id="cuisine"
-            {...register('cuisine', { required: 'Cuisine type is required' })}
-            placeholder="Enter cuisine type"
-            className={`input input-bordered w-full ${errors.cuisine ? 'border-red-500' : ''}`}
-          />
-          {errors.cuisine && <p className="text-red-500 text-sm">{errors.cuisine.message}</p>}
-        </div>
-
-        {/* Location */}
-        <div className="mb-4">
-          <label htmlFor="location" className="block text-lg font-medium">Location</label>
-          <input
-            type="text"
-            id="location"
-            {...register('location', { required: 'Location is required' })}
-            placeholder="Enter location"
-            className={`input input-bordered w-full ${errors.location ? 'border-red-500' : ''}`}
-          />
-          {errors.location && <p className="text-red-500 text-sm">{errors.location.message}</p>}
-        </div>
-
-        {/* Phone */}
-        <div className="mb-4">
-          <label htmlFor="phone" className="block text-lg font-medium">Phone</label>
-          <input
-            type="text"
-            id="phone"
-            {...register('phone', {
-              required: 'Phone number is required',
-              pattern: { value: /^[0-9]+$/, message: 'Invalid phone number format' },
-            })}
-            placeholder="Enter phone number"
-            className={`input input-bordered w-full ${errors.phone ? 'border-red-500' : ''}`}
-          />
-          {errors.phone && <p className="text-red-500 text-sm">{errors.phone.message}</p>}
-        </div>
-
-        {/* Rating */}
-        <div className="mb-4">
-          <label htmlFor="rating" className="block text-lg font-medium">Rating (0-5)</label>
-          <input
-            type="number"
-            id="rating"
-            {...register('rating', {
-              required: 'Rating is required',
-              min: { value: 0, message: 'Rating must be at least 0' },
-              max: { value: 5, message: 'Rating must be no more than 5' },
-            })}
-            placeholder="Enter rating"
-            className={`input input-bordered w-full ${errors.rating ? 'border-red-500' : ''}`}
-            min="0"
-            max="5"
-          />
-          {errors.rating && <p className="text-red-500 text-sm">{errors.rating.message}</p>}
-        </div>
-
-        {/* Image Upload */}
-        <div className="mb-4">
-          <label htmlFor="image" className="block text-lg font-medium">Restaurant Image</label>
-          <input
-            type="file"
-            id="image"
-            onChange={(e) => setImageFile(e.target.files[0])} // Capture the uploaded image file
-            className="input input-bordered w-full"
-          />
-          {currentImage && (
-            <div className="mt-2">
-              <p>Current Image:</p>
-              <img src={currentImage} alt="Current Restaurant" className="w-32 h-32 object-cover" />
+    <div className="container mx-auto p-8">
+      <h2 className="text-2xl font-semibold mb-6">Edit Restaurant</h2>
+      {restaurantData ? (
+        <div>
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+            {/* Restaurant Details */}
+            <div className="form-control">
+              <label className="label">Name</label>
+              <input
+                {...register("name")}
+                className="input input-bordered"
+                placeholder="Restaurant Name"
+              />
             </div>
-          )}
+
+            <div className="form-control">
+              <label className="label">Cuisine</label>
+              <input
+                {...register("cuisine")}
+                className="input input-bordered"
+                placeholder="Cuisine"
+              />
+            </div>
+
+            <div className="form-control">
+              <label className="label">Location</label>
+              <input
+                {...register("location")}
+                className="input input-bordered"
+                placeholder="Location"
+              />
+            </div>
+
+            <div className="form-control">
+              <label className="label">Phone</label>
+              <input
+                {...register("phone")}
+                className="input input-bordered"
+                placeholder="Phone Number"
+              />
+            </div>
+
+            <div className="form-control">
+              <label className="label">Rating</label>
+              <input
+                type="number"
+                {...register("rating")}
+                step="0.1"
+                min="0"
+                max="5"
+                className="input input-bordered"
+                placeholder="Rating"
+              />
+            </div>
+
+            {/* Current Image */}
+            <div className="form-control">
+              <label className="label">Current Image</label>
+              {restaurantData?.image && (
+                <img
+                  src={restaurantData.image}
+                  alt="Restaurant"
+                  className="w-32 h-32 object-cover mb-2"
+                />
+              )}
+              <label className="label">Change Image</label>
+              <input
+                type="file"
+                onChange={handleImageChange}
+                className="input input-bordered"
+              />
+            </div>
+
+            {/* Current Menu Items */}
+            <div>
+              <h4 className="text-xl font-semibold mb-2">Current Menu Items</h4>
+              {restaurantData.menuItems.map((item) => (
+                <div
+                  key={item._id}
+                  className="flex justify-between items-center mb-2"
+                >
+                  <span
+                    className={
+                      selectedRemoveMenuItems.includes(item._id)
+                        ? "line-through"
+                        : ""
+                    }
+                  >
+                    {item.name}
+                  </span>
+                  <button
+                    type="button"
+                    className="btn btn-error"
+                    onClick={() => handleRemoveMenuItem(item._id)}
+                  >
+                    Remove
+                  </button>
+                </div>
+              ))}
+            </div>
+
+            {/* New Menu Items (Multiple Selection) */}
+            <div className="form-control">
+              <label className="label">Add New Menu Items</label>
+              <select
+                multiple
+                onChange={handleMenuItemChange}
+                className="input input-bordered w-full h-40"
+              >
+                {menuItems.map((item) => (
+                  <option key={item._id} value={item._id}>
+                    {item.name}
+                  </option>
+                ))}
+              </select>
+
+              {/* Display Selected New Menu Items */}
+              {selectedMenuItems.length > 0 && (
+                <div className="mt-2">
+                  <h4 className="font-medium">Selected New Menu Items:</h4>
+                  <ul className="list-disc list-inside">
+                    {selectedMenuItems.map((itemId) => {
+                      const item = menuItems.find(
+                        (item) => item._id === itemId
+                      );
+                      return <li key={itemId}>{item?.name}</li>;
+                    })}
+                  </ul>
+                </div>
+              )}
+            </div>
+
+            {/* Submit and Delete Buttons */}
+            <button type="submit" className="btn btn-success w-full">
+              Update Restaurant
+            </button>
+          </form>
+          <button
+            onClick={deleteThis}
+            className="w-40 btn bg-red-700 text-black mt-10"
+          >
+            DELETE RESTAURANT
+          </button>
         </div>
-
-{/* Menu Items (Multiple) */}
-<div className="mb-4">
-  <label htmlFor="menuItems" className="block text-lg font-medium">Menu Items</label>
-  {fields.map((field, index) => (
-    <div key={field.id} className="flex items-center space-x-2 mb-2">
-      <input
-        type="text"
-        {...register(`menuItems.${index}.menuItem.name`, { required: 'Menu item is required' })} // Extract 'name' or appropriate property
-        placeholder="Enter menu item name"
-        className="input input-bordered w-full"
-      />
-      <button
-        type="button"
-        onClick={() => remove(index)}
-        className="bg-red-500 text-white px-4 py-2 rounded-lg"
-      >
-        Remove
-      </button>
-    </div>
-  ))}
-  <button
-    type="button"
-    onClick={() => append({ menuItem: { name: '' } })}  // Append a blank object with 'name' property
-    className="bg-blue-500 text-white px-6 py-2 rounded-lg shadow hover:bg-blue-600 transition-all"
-  >
-    Add Menu Item
-  </button>
-</div>
-<div className='flex flex-col'>
-
-<button
-          type="submit"
-          className="bg-green-500 text-white px-6 py-2 rounded-lg shadow hover:bg-green-600 transition-all"
-        >
-          Update Restaurant
-        </button>
-</div>
-
-
-
-      </form>
-      <button onClick={() => deleteThis(id)} className=' w-40 btn bg-red-700 text-black mt-10'>
-          DELETE RESTAURANT
-        </button>
-  
+      ) : (
+        <p>Loading restaurant data...</p>
+      )}
     </div>
   );
 };
+
+export default EditRestaurant;

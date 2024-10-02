@@ -3,28 +3,36 @@ import { useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
 import { useNavigate, useParams } from 'react-router-dom';
 import { deleteDishAPI, getDishAPI, updateDishAPI } from '../../../services/DishAPI';
+import { getAllMenuItems } from '../../../services/menuItemsAPI';
 
 const EditDish = () => {
   const { id } = useParams(); 
   const navigate = useNavigate();
   const { register, handleSubmit, reset, formState: { errors } } = useForm();
+  const [menuItems, setMenuItems] = useState([]);
+  const [dishData, setDishData] = useState();
   const [selectedImage, setSelectedImage] = useState(null); // Image upload state
   const [currentImage, setCurrentImage] = useState(''); // Current image URL state
-
+  const [selectedMenuItem, setSelectedMenuItem] = useState(''); // New state to track selected menu item
+  
+  
   // Fetch dish data when the component loads
   useEffect(() => {
     const fetchDish = async () => {
       try {
         const response = await getDishAPI(id);
-        if (response.success) {
-          const dishData = response.data;
+        if (response) {
+          const dishData = response;
+          console.log(response);
+          setDishData(response);
           reset({
-            ...dishData,
-            menuItem: dishData.menuItem.name || dishData.menuItem._id // Show the menu item name or id
+            name: dishData.name,
+            description: dishData.description,
+            price: dishData.price,
+            menuItem: dishData.menuItem.name
           });
-          setCurrentImage(dishData.image); // Set current image URL
-        } else {
-          toast.error('Failed to load dish data');
+          setCurrentImage(dishData.image);
+          setSelectedMenuItem(dishData.menuItem._id); 
         }
       } catch (error) {
         toast.error('Failed to load dish data');
@@ -32,12 +40,20 @@ const EditDish = () => {
       }
     };
 
-    fetchDish();
-  }, [id, reset]);
+    const fetchMenuItems = async () => {
+      try {
+        const response = await getAllMenuItems();
+        setMenuItems(response);
+        console.log(response, "menuItems");
+      } catch (error) {
+        console.error('Failed to fetch menu items', error);
+      }
+    };
 
-  const handleImageChange = (e) => {
-    setSelectedImage(e.target.files[0]);
-  };
+    // Call both functions
+    fetchDish();
+    fetchMenuItems();
+  }, [id, reset]);
 
   const onSubmit = async (data) => {
     try {
@@ -45,15 +61,13 @@ const EditDish = () => {
       formData.append('name', data.name);
       formData.append('description', data.description);
       formData.append('price', data.price);
+      formData.append('menuItem', selectedMenuItem); // Pass the correct ObjectId for the menu item
       
-      // Ensure you're submitting the correct field, either menuItem.name or menuItem._id
-      formData.append('menuItem', data.menuItem);
-  
       if (selectedImage) {
         formData.append('image', selectedImage);
       }
   
-      const response = await updateDishAPI(id, formData);
+      const response = await updateDishAPI(id, formData);  // Make sure 'id' is a valid ObjectId
   
       if (response.success === true) {
         toast.success('Dish updated successfully!');
@@ -68,21 +82,26 @@ const EditDish = () => {
     }
   };
   
+  const handleImageChange = (e) => {
+    setSelectedImage(e.target.files[0]);
+  };
 
+  const handleMenuItemChange = (e) => {
+    setSelectedMenuItem(e.target.value); // Update selected menu item when a new option is selected
+  };
 
-    // Delete Dish
-    const deleteThis = async (id) => {
-      try {
-        const response = await deleteDishAPI(id);
-        console.log(response);
-        toast.success('Dish deleted');
-        navigate('/admin/manage-dishes');
-      } catch (error) {
-        toast.error('Failed to delete Dish item');
-        console.log(error, '=== delete failed');
-      }
-    };
-
+  // Delete Dish
+  const deleteThis = async (id) => {
+    try {
+      const response = await deleteDishAPI(id);
+      console.log(response);
+      toast.success('Dish deleted');
+      navigate('/admin/manage-dishes');
+    } catch (error) {
+      toast.error('Failed to delete Dish item');
+      console.log(error, '=== delete failed');
+    }
+  };
 
   return (
     <div className="max-w-lg mt-10 mb-10 p-10 mx-auto shadow-lg rounded-lg bg-white">
@@ -128,14 +147,35 @@ const EditDish = () => {
 
 {/* Menu Item */}
 <div className="mb-4">
-  <label htmlFor="menuItem" className="block text-lg font-medium">Menu Item</label>
-  <input
-    type="text"
-    id="menuItem"
+  {/* Display Current Menu Item */}
+  {dishData?.menuItem && (
+    
+    <span className="block mb-2 text-lg ">
+      Menu Item: {dishData.menuItem.name}
+    </span>
+  )}
+
+  <label htmlFor="menuItems" className="block text-lg font-medium">Select New Menu Item</label>
+  <select
+    id="menuItems"
     {...register('menuItem', { required: 'Menu item is required' })}
-    placeholder="Enter menu item name or ID"
-    className={`input input-bordered w-full ${errors.menuItem ? 'border-red-500' : ''}`}
-  />
+    className="input input-bordered w-full"
+    value={selectedMenuItem} 
+    onChange={handleMenuItemChange} // Make sure this function sets selectedMenuItem
+  >
+    {/* Non-selectable option to show the current menu item */}
+    <option value="" disabled>
+      Current: {'No Menu Item Selected'}
+    </option>
+
+    {/* List of selectable menu items */}
+    {menuItems.map((item) => (
+      <option key={item._id} value={item._id}>
+        {item.name}
+      </option>
+    ))}
+  </select>
+
   {errors.menuItem && <p className="text-red-500 text-sm">{errors.menuItem.message}</p>}
 </div>
 
@@ -167,11 +207,10 @@ const EditDish = () => {
         </div>
       </form>
 
-            {/* Delete Button */}
-            <button onClick={() => deleteThis(id)} className="w-40 btn bg-red-700 text-black mt-10">
+      {/* Delete Button */}
+      <button onClick={() => deleteThis(id)} className="w-40 btn bg-red-700 text-black mt-10">
         DELETE MENU ITEM
       </button>
-
     </div>
   );
 };

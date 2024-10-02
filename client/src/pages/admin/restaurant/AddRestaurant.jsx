@@ -1,25 +1,34 @@
-import React, { useState } from 'react';
-import { useForm, useFieldArray } from 'react-hook-form';
+import React, { useEffect, useState } from 'react';
+import { useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
 import { AddRestaurantAPI } from '../../../services/restaurantAPI';
 import { useNavigate } from 'react-router-dom';
+import { axiosInstance } from '../../../config/axiosInstance';
 
 export const AddRestaurant = () => {
-  const navigate = useNavigate()
-  const {
-    register,
-    handleSubmit,
-    control,
-    formState: { errors },
-  } = useForm();
-  
-  // Hook for handling multiple menu items
-  const { fields, append, remove } = useFieldArray({
-    control,
-    name: 'menuItems',
-  });
+  const navigate = useNavigate();
+  const [menuItems, setMenuItems] = useState([]);
+  const [selectedMenuItems, setSelectedMenuItems] = useState([]); // Store selected menu items
 
+  const { register, handleSubmit, formState: { errors } } = useForm();
   const [imageFile, setImageFile] = useState(null); // Image upload state
+
+  // Fetch menu items
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axiosInstance({
+          url: "/menu-item/all",
+          method: "GET",
+        });
+        setMenuItems(response?.data?.data);
+        console.log(response.data.data, "menuItems");
+      } catch (error) {
+        console.log(error, "Axios failed to fetch menu items");
+      }
+    };
+    fetchData();
+  }, []);
 
   // Handle form submit
   const onSubmit = async (data) => {
@@ -32,20 +41,28 @@ export const AddRestaurant = () => {
       formData.append('rating', data.rating);
       if (imageFile) formData.append('image', imageFile); // Add image file
 
-      // Add multiple menu items
-      data.menuItems.forEach((item) => {
-        formData.append('menuItems[]', item.menuItem);
+      // Add all selected menu items to formData
+      selectedMenuItems.forEach((item) => {
+        formData.append('menuItems[]', item);
       });
 
-      const response = await AddRestaurantAPI(formData); // API call
+      const response = await AddRestaurantAPI(formData); // API call to add restaurant
       toast.success('Restaurant added successfully');
-      console.log(response);
-      navigate('/admin/manage-restaurant')
+      navigate('/admin/manage-restaurant');
 
     } catch (error) {
+
       toast.error('Failed to add restaurant, try later');
       console.log(error, '=== failed to add');
+      
     }
+  };
+
+
+  // Handle menu item selection
+  const handleMenuItemChange = (e) => {
+    const selectedOptions = Array.from(e.target.selectedOptions, option => option.value);
+    setSelectedMenuItems(selectedOptions); // Update selected items array
   };
 
   return (
@@ -137,33 +154,34 @@ export const AddRestaurant = () => {
           />
         </div>
 
-        {/* Menu Items (Multiple) */}
+        {/* Menu Items (Multiple Selection) */}
         <div className="mb-4">
           <label htmlFor="menuItems" className="block text-lg font-medium">Menu Items</label>
-          {fields.map((field, index) => (
-            <div key={field.id} className="flex items-center space-x-2 mb-2">
-              <input
-                type="text"
-                {...register(`menuItems.${index}.menuItem`, { required: 'Menu item is required' })}
-                placeholder="Enter menu item ID"
-                className="input input-bordered w-full"
-              />
-              <button
-                type="button"
-                onClick={() => remove(index)}
-                className="bg-red-500 text-white px-4 py-2 rounded-lg"
-              >
-                Remove
-              </button>
-            </div>
-          ))}
-          <button
-            type="button"
-            onClick={() => append({ menuItem: '' })}
-            className="bg-blue-500 text-white px-6 py-2 rounded-lg shadow hover:bg-blue-600 transition-all"
+          <select
+            multiple
+            id="menuItems"
+            defaultValue={'DEFAULT'}
+            onChange={handleMenuItemChange}
+            className="input input-bordered w-full  h-40"
           >
-            Add Menu Item
-          </button>
+             <option value="DEFAULT" disabled>Select menu item</option>
+            {menuItems.map((item) => (
+              <option key={item._id} value={item._id}>{item.name}</option>
+            ))}
+          </select>
+
+          {/* Display selected menu items */}
+          {selectedMenuItems.length > 0 && (
+            <div className="mt-2">
+              <h4 className="font-medium">Selected Menu Items:</h4>
+              <ul className="list-disc list-inside">
+                {selectedMenuItems.map((itemId) => {
+                  const item = menuItems.find((item) => item._id === itemId);
+                  return <li key={itemId}>{item?.name}</li>;
+                })}
+              </ul>
+            </div>
+          )}
         </div>
 
         {/* Submit Button */}
