@@ -24,13 +24,14 @@ import { MenuAdmin } from './pages/admin/menu/MenuAdmin .jsx';
 import { DishesAdmin } from './pages/admin/dishes/DishesAdmin .jsx';
 import { AdminAuth } from './protected routes/AdminAuth.jsx';
 import { AddRestaurant } from './pages/admin/restaurant/AddRestaurant.jsx';
-import { EditRestaurant } from './pages/admin/restaurant/EditResturant.jsx';
-import { EditMenuItem } from './pages/admin/menu/EditMenuItem.jsx';
+
 import AddMenuItems from './pages/admin/menu/AddMenuItem.jsx';
 import AddDish from './pages/admin/dishes/AddDish.jsx';
 import EditDish from './pages/admin/dishes/EditDish.jsx';
 import { Provider } from 'react-redux';
 import { store } from '../src/redux/store.js'; 
+import EditRestaurant from './pages/admin/restaurant/EditResturant.jsx';
+import EditMenuItem from './pages/admin/menu/EditMenuItem.jsx';
 
 
 
@@ -139,7 +140,7 @@ const router = createBrowserRouter([
           },
           {
             path: "manage-menu/:id" ,
-            element: <EditMenuItem/>
+            element:<EditMenuItem/>
           },
           {
             path: "manage-menu/add-menu",
