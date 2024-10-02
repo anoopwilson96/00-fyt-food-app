@@ -7,13 +7,13 @@ import apiRouter from './routes/index.js';
 import cookieParser from 'cookie-parser';
 
 const app = express()
-
+// [
+//   "https://fyt-food-delivery.vercel.app/",
+//   "http://localhost:5173",
+//   "http://localhost:5174",
+//   ]
 app.use(cors({
-  origin: [
-    "https://fyt-food-delivery.vercel.app/",
-    "http://localhost:5173",
-    "http://localhost:5174",
-    ],
+  origin: true,
  credentials: true
 }))
 app.use(express.json())
