@@ -10,7 +10,7 @@ import { useNavigate } from 'react-router-dom';
 export const Profile = () => {
   const [user, setUser] = useState({});
   const [isEditing, setIsEditing] = useState(false); // State to toggle edit form visibility
-  const { register, handleSubmit, reset } = useForm();
+  const { register, handleSubmit, reset,formState: { errors }  } = useForm();
   const navigate = useNavigate()
   
 //get user data
@@ -120,14 +120,33 @@ const getUserData = async () => {
               </div>
 
               <div className="mb-4">
-                <label className="block mb-2 text-gray-600 font-medium">Address</label>
-                <textarea
-                    {...register('address')}
-                    className="w-full border border-gray-300 px-4 py-2 rounded-lg focus:outline-none focus:border-blue-500"
-                    placeholder="Enter your address"
-                    rows="2" 
-                />
-              </div>
+  <label className="block mb-2 text-gray-600 font-medium">Address</label>
+  <textarea
+    {...register('address', {
+      required: "Address is required",
+      minLength: {
+        value: 10,
+        message: "Address must be at least 10 characters long" // Set a minimum length for the address
+      },
+      maxLength: {
+        value: 100,
+        message: "Address cannot exceed 100 characters" // Set a maximum length
+      },
+      pattern: {
+        value: /^[a-zA-Z0-9\s,'-]*$/,
+        message: "Address can contain only letters, numbers, commas, apostrophes, hyphens, and spaces" // Regex for allowed characters
+      }
+    })}
+    className="w-full border border-gray-300 px-4 py-2 rounded-lg focus:outline-none focus:border-blue-500"
+    placeholder="Enter your address"
+    rows="2"
+  />
+  {/* Error message display */}
+  {errors.address && (
+    <p className="text-red-500 text-sm mt-1">{errors.address.message}</p>
+  )}
+</div>
+
 
 
               <div className="mb-4">
