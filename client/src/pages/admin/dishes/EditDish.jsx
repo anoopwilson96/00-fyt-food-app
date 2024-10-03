@@ -209,7 +209,7 @@ const EditDish = () => {
 
       {/* Delete Button */}
       <button onClick={() => deleteThis(id)} className="w-40 btn bg-red-700 text-black mt-10">
-        DELETE MENU ITEM
+        DELETE DISH
       </button>
     </div>
   );

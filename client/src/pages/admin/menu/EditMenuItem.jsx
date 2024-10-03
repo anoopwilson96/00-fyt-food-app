@@ -170,7 +170,7 @@ const onSubmit = async (formData) => {
 
 
   return (
-    <div className="container mx-auto p-8">
+    <div className="max-w-lg mx-auto p-8">
       <h2 className="text-2xl font-semibold mb-6">Edit Menu Item</h2>
      
       {menuData ? (
@@ -337,7 +337,7 @@ const onSubmit = async (formData) => {
                   onClick={deleteThis}
                   className="w-40 btn bg-red-700 text-black mt-10"
                 >
-                  DELETE RESTAURANT
+                  DELETE MENU ITEM
                 </button> </div>
       ) : (
         <p>Loading menu item data...</p>

@@ -130,7 +130,7 @@ const EditRestaurant = () => {
   };
 
   return (
-    <div className="container mx-auto p-8">
+    <div className="max-w-lg mx-auto p-8 ">
       <h2 className="text-2xl font-semibold mb-6">Edit Restaurant</h2>
       {restaurantData ? (
         <div>
