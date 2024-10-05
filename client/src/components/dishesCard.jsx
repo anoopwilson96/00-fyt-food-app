@@ -41,9 +41,10 @@ export const DishesCard = ({ dish, restaurantId }) => {
       // Fetch the active cart
       const cartResponse = await axiosInstance.get('/cart/active', { withCredentials: true });
       const currentCart = cartResponse.data.cart;
+      console.log(currentCart)
 
       // Check if the cart exists and if it's from a different restaurant
-      if (currentCart && currentCart.restaurant && currentCart.restaurant._id !== restaurantId) {
+      if (currentCart.items.length > 0 && currentCart.restaurant._id !== restaurantId) {
         const confirmClear = window.confirm(
           'Existing cart will be cleared. Proceed?'
         );
