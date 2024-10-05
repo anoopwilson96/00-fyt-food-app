@@ -230,11 +230,11 @@ export const CartPage = () => {
           cartItems.map((item) => (
             <div
               key={item._id}
-              className="flex justify-between items-center border-b border-gray-300 py-4"
+              className="flex justify-between gap-4 items-center border-b border-gray-300 py-4"
             >
               <div className="flex items-center space-x-6">
                 <p className="text-lg font-semibold text-gray-700">{item.dish.name}</p>
-                <p className="text-sm text-gray-600">₹ {item.dish.price.toFixed(2)}</p>
+                <p className="text-sm text-nowrap text-gray-600">₹ {item.dish.price.toFixed(2)} </p>
               </div>
               <div className="flex items-center space-x-4">
                 <button
