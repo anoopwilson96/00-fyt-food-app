@@ -1,7 +1,6 @@
 import mongoose from 'mongoose';
 import { Restaurant } from './restaurantModel.js';
 
-
 const { Schema } = mongoose;
 
 const dishSchema = new Schema({
