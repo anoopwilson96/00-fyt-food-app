@@ -43,17 +43,17 @@ export const DishesCard = ({ dish, restaurantId }) => {
       const currentCart = cartResponse.data.cart;
 
       // Check if the cart exists and if it's from a different restaurant
-      // if (currentCart.items.length > 0 && currentCart.restaurant && currentCart.restaurant._id !== restaurantId) {
-      //   console.log(restaurantId,"===!!!",currentCart.restaurant._id)
-      //   const confirmClear = window.confirm(
-      //     'Existing cart will be cleared. Proceed?'
-      //   );
+      if (currentCart.items.length > 0 && currentCart.restaurant && currentCart.restaurant._id !== restaurantId) {
+        console.log(restaurantId,"===!!!",currentCart.restaurant._id)
+        const confirmClear = window.confirm(
+          'Existing cart will be cleared. Proceed?'
+        );
       
-      //   if (!confirmClear) {
-      //     navigate(`/user/cart`);
-      //     return;
-      //   }
-      // }
+        if (!confirmClear) {
+          navigate(`/user/cart`);
+          return;
+        }
+      }
 
       // Check if the dish is already in the cart and update its quantity
       const existingCartItem = currentCart?.items?.find(item => item.dish._id === dish._id);
