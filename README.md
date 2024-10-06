@@ -36,7 +36,7 @@ MONGODB_URI=your_mongodb_connection_string
 npm start
 ```
 
-Access the application at http://localhost:3000
+Access the application at http://localhost:1000
 
 **Database Structure**
 *Briefly describe the MongoDB schema used for storing hotels, food items, users, orders, etc.*
