@@ -43,7 +43,7 @@ export const DishesCard = ({ dish, restaurantId }) => {
       const currentCart = cartResponse.data.cart;
 
       // Check if the cart exists and if it's from a different restaurant
-      if (currentCart.items.length > 0 && currentCart.restaurant && currentCart.restaurant._id !== restaurantId) {
+      if (currentCart && currentCart.items.length > 0 && currentCart.restaurant && currentCart.restaurant._id !== restaurantId) {
         console.log(restaurantId,"===!!!",currentCart.restaurant._id)
         const confirmClear = window.confirm(
           'Existing cart will be cleared. Proceed?'
