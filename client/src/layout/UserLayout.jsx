@@ -6,18 +6,9 @@ import { Footer } from '../pages/user/footer'
 export const UserLayout = () => {
   return (
     <>
-    
     <Header/>
-    
-
-
     <Outlet/>
-
-    
-    
     <Footer/>
-    
-
     </>
 
   )

@@ -1,4 +1,5 @@
 import React from 'react'
+import { Link } from 'react-router-dom'
 
 export const FooterLanding = () => {
   return (
@@ -17,24 +18,24 @@ export const FooterLanding = () => {
           </p>
         </aside>
         <nav>
-  <h6 className="footer-title">Services</h6>
-  <a className="link link-hover">Food Delivery</a>
-  <a className="link link-hover">Restaurant Partnerships</a>
-  <a className="link link-hover">Corporate Orders</a>
-  <a className="link link-hover">Special Offers</a>
+  <h6 className="footer-title"  >Services</h6>
+  <Link className="link link-hover" to={'/food'}> Food Delivery </Link>
+  <Link className="link link-hover" to={'/partnership'}>Restaurant Partnerships </Link>
+  <Link className="link link-hover" to={'/bulk'}>Corporate Orders </Link>
+  <Link className="link link-hover" to={'/special'}>Special Offers </Link>
 </nav>
 <nav>
   <h6 className="footer-title">Company</h6>
-  <a className="link link-hover">About FYT</a>
-  <a className="link link-hover">Contact Us</a>
-  <a className="link link-hover">Careers</a>
-  <a className="link link-hover">News & Press</a>
+  <Link className="link link-hover" to={'/about'} >About FYT</Link>
+  <Link className="link link-hover" to={'/contact-us'} >Contact Us</Link>
+  <Link className="link link-hover" to={'/careers'} >Careers</Link>
+  <Link className="link link-hover" to={'/news'} >News & Press</Link>
 </nav>
 <nav>
   <h6 className="footer-title">Legal</h6>
-  <a className="link link-hover">Terms of Service</a>
-  <a className="link link-hover">Privacy Policy</a>
-  <a className="link link-hover">Refund Policy</a>
+  <Link className="link link-hover" to={'/terms'} >Terms of Service</Link>
+  <Link className="link link-hover" to={'/privacy'} >Privacy Policy</Link>
+  <Link className="link link-hover" to={'/refund'} >Refund Policy</Link>
 </nav>
 
       </footer>

@@ -24,7 +24,6 @@ import { MenuAdmin } from './pages/admin/menu/MenuAdmin .jsx';
 import { DishesAdmin } from './pages/admin/dishes/DishesAdmin .jsx';
 import { AdminAuth } from './protected routes/AdminAuth.jsx';
 import { AddRestaurant } from './pages/admin/restaurant/AddRestaurant.jsx';
-
 import AddMenuItems from './pages/admin/menu/AddMenuItem.jsx';
 import AddDish from './pages/admin/dishes/AddDish.jsx';
 import EditDish from './pages/admin/dishes/EditDish.jsx';
@@ -32,6 +31,20 @@ import { Provider } from 'react-redux';
 import { store } from '../src/redux/store.js'; 
 import EditRestaurant from './pages/admin/restaurant/EditResturant.jsx';
 import EditMenuItem from './pages/admin/menu/EditMenuItem.jsx';
+
+import AboutFYT from './pages/landing/footerPages/aboutFYT.jsx';
+import Services from './pages/landing/footerPages/services.jsx';
+import FoodDelivery from './pages/landing/footerPages/foodDelivery.jsx';
+import RestaurantPartnerships from './pages/landing/footerPages/restaurantPartnership.jsx';
+import CorporateOrders from './pages/landing/footerPages/corporateOrders.jsx';
+import SpecialOffers from './pages/landing/footerPages/specialOffers.jsx';
+import ContactUs from './pages/landing/footerPages/contactUs.jsx';
+import Careers from './pages/landing/footerPages/careers.jsx';
+import NewsPress from './pages/landing/footerPages/newsPress.jsx';
+import Legal from './pages/landing/footerPages/legal.jsx';
+import TermsOfService from './pages/landing/footerPages/termsOfService.jsx';
+import PrivacyPolicy from './pages/landing/footerPages/privacyPolicy.jsx';
+import RefundPolicy from './pages/landing/footerPages/refundPolicy.jsx';
 
 
 
@@ -54,6 +67,58 @@ const router = createBrowserRouter([
       {
         path: "signup",
         element: <SignupLanding/>
+      },
+      {
+        path: "about",
+        element:<AboutFYT/>
+      },
+      {
+        path: "service",
+        element:<Services/>
+      },
+      {
+        path: "food",
+        element:<FoodDelivery/>
+      },
+      {
+        path: "partnership",
+        element:<RestaurantPartnerships/>
+      },
+      {
+        path: "bulk",
+        element:<CorporateOrders/>
+      },
+      {
+        path: "special",
+        element:<SpecialOffers/>
+      },
+      {
+        path: "contact-us",
+        element:<ContactUs/>
+      },
+      {
+        path: "careers",
+        element:<Careers/>
+      },
+      {
+        path: "news",
+        element:<NewsPress/>
+      },
+      {
+        path: "legal",
+        element:<Legal/>
+      },
+      {
+        path: "terms",
+        element:<TermsOfService/>
+      },
+      {
+        path: "privacy",
+        element:<PrivacyPolicy/>
+      },
+      {
+        path: "refund",
+        element:<RefundPolicy/>
       }
     ],
   },
@@ -100,6 +165,58 @@ const router = createBrowserRouter([
       {
         path: "user/order-history/cart",
         element: <CartPage/>
+      },
+      {
+        path: "about",
+        element:<AboutFYT/>
+      },
+      {
+        path: "service",
+        element:<Services/>
+      },
+      {
+        path: "food",
+        element:<FoodDelivery/>
+      },
+      {
+        path: "partnership",
+        element:<RestaurantPartnerships/>
+      },
+      {
+        path: "bulk",
+        element:<CorporateOrders/>
+      },
+      {
+        path: "special",
+        element:<SpecialOffers/>
+      },
+      {
+        path: "contact-us",
+        element:<ContactUs/>
+      },
+      {
+        path: "careers",
+        element:<Careers/>
+      },
+      {
+        path: "news",
+        element:<NewsPress/>
+      },
+      {
+        path: "legal",
+        element:<Legal/>
+      },
+      {
+        path: "terms",
+        element:<TermsOfService/>
+      },
+      {
+        path: "privacy",
+        element:<PrivacyPolicy/>
+      },
+      {
+        path: "refund",
+        element:<RefundPolicy/>
       }
     ]
   },

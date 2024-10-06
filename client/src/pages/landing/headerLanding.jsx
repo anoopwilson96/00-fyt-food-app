@@ -10,10 +10,10 @@ export const HeaderLanding = () => {
       <div className="navbar flex flex-row items-center justify-between px-5 md:px-40 ">
         <Link to={'/'}>
         <img
-        className="h-14"
-        src="https://res.cloudinary.com/aw96/image/upload/v1724584697/fyt_bfgnpm.png"
-        alt="FYT Logo"
-      />        
+            className="h-20 lg:h-24 min-w-20"
+            src="https://res.cloudinary.com/aw96/image/upload/v1724584697/fyt_bfgnpm.png"
+            alt="FYT Logo"
+          />       
         </Link>
 
 
