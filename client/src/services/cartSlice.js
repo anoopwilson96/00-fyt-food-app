@@ -43,11 +43,13 @@ const cartSlice = createSlice({
       })
       .addCase(fetchCart.fulfilled, (state, action) => {
         state.status = 'succeeded';
-        state.items = action.payload.cart.items || [];
-        state.subtotal = action.payload.cart.subtotal || 0;
-        state.total = action.payload.cart.total || 0;
-        state.user = action.payload.cart.user || null;
+        const cartData = action.payload?.cart || {}; // Safe access to cart object
+        state.items = cartData.items || [];
+        state.subtotal = cartData.subtotal || 0;
+        state.total = cartData.total || 0;
+        state.user = cartData.user || null;
       })
+      
       .addCase(fetchCart.rejected, (state, action) => {
         state.status = 'failed';
         state.error = action.error.message;
