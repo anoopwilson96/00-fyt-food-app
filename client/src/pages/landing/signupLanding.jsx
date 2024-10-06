@@ -49,7 +49,7 @@ const onSubmit = async (data)=>{
   <div className="hero-content flex-col lg:flex-row-reverse">
     <div className="text-center lg:text-left">
       <h1 className="text-5xl font-bold">Sign Up Now!</h1>
-      <p className="py-6">
+      <p className="py-6 text-wrap">
         Join Fill Your Tummy and explore a world of delicious meals delivered right to your door. Sign up today and satisfy your cravings anytime, anywhere!
       </p>
     </div>
