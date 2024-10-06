@@ -41,10 +41,10 @@ export const DishesCard = ({ dish, restaurantId }) => {
       // Fetch the active cart
       const cartResponse = await axiosInstance.get('/cart/active', { withCredentials: true });
       const currentCart = cartResponse.data.cart;
-      console.log(currentCart)
 
       // Check if the cart exists and if it's from a different restaurant
-      if (currentCart.items.length > 0 && currentCart.restaurant._id !== restaurantId) {
+      if (currentCart.items.length > 0 && currentCart.restaurant && currentCart.restaurant._id !== restaurantId) {
+        console.log(restaurantId,"===!!!",currentCart.restaurant._id)
         const confirmClear = window.confirm(
           'Existing cart will be cleared. Proceed?'
         );
@@ -71,7 +71,9 @@ export const DishesCard = ({ dish, restaurantId }) => {
       };
 
       // Add to cart request
+      console.log(data,"send 1")
       const response = await axiosInstance.post('/cart/add', data, { withCredentials: true });
+
 
       if (response.data.success) {
         toast.success('Dish added to cart!');
