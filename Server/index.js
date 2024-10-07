@@ -16,7 +16,7 @@ app.use(cors({
     "http://localhost:5175",
     ],
   credentials: true,
-  methods: ['GET', 'POST', 'PATCH', 'DELETE'], // Specify the methods allowed
+  methods: ['GET', 'POST', 'PATCH', 'DELETE','PUT'], // Specify the methods allowed
   allowedHeaders: ['Content-Type', 'Authorization'], // Add allowed headers if necessary
 }));
 
