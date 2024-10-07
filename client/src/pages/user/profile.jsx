@@ -58,6 +58,7 @@ const getUserData = async () => {
     }
   };
   
+  
   return (
     <>
       {/* Section 1: Profile Display */}
