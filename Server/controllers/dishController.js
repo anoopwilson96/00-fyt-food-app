@@ -4,11 +4,11 @@ import { imageUploadCloudinary } from "../utils/cloudinaryUpload.js";
 
 export const addDish = async (req, res, next) => {
   try {
-    const { name, description, price, image, menuItem } = req.body;
+    const { name, description, price, image } = req.body;
     console.log(req.body)
 
     // Check if all required fields are provided
-    if (!name || !description || !price || !menuItem) {
+    if (!name || !description || !price) {
       return res.status(400).json({ success: false, message: "All fields are required" });
     }
 
@@ -20,8 +20,7 @@ export const addDish = async (req, res, next) => {
       name,
       description,
       price,
-      image: imageUrl || image,
-      menuItem,
+      image: imageUrl || image
     });
 
     // Save the new dish to the database
@@ -86,7 +85,7 @@ export const getAllDishes = async (req, res, next) => {
 export const updateDish = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const { name, description, price, image, menuItem } = req.body;
+    const { name, description, price, image } = req.body;
 
     // Upload new image to Cloudinary if a file is provided
     const imageUrl = req.file ? await imageUploadCloudinary(req.file.path) : image;
@@ -100,7 +99,7 @@ export const updateDish = async (req, res, next) => {
         description,
         price,
         image: imageUrl || image,
-        menuItem,
+   
       },
       { new: true } // Return the updated document
     );

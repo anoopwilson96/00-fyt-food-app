@@ -11,25 +11,25 @@ const AddDish = () => {
 
   // Define states
   const [selectedImage, setSelectedImage] = useState(null);
-  const [menuItems, setMenuItems] = useState([]);
+  // const [menuItems, setMenuItems] = useState([]);
 
   const handleImageChange = (e) => {
     setSelectedImage(e.target.files[0]);
   };
 
-  useEffect(() => {
-    const fetchMenuItems = async () => {
-      try {
-        const response = await getAllMenuItems();
-        setMenuItems(response);
-        console.log(response, "menuItems");
-      } catch (error) {
-        console.error('Failed to fetch menu items', error);
-      }
-    };
+  // useEffect(() => {
+  //   const fetchMenuItems = async () => {
+  //     try {
+  //       const response = await getAllMenuItems();
+  //       setMenuItems(response);
+  //       console.log(response, "menuItems");
+  //     } catch (error) {
+  //       console.error('Failed to fetch menu items', error);
+  //     }
+  //   };
 
-    fetchMenuItems();
-  }, []);
+  //   fetchMenuItems();
+  // }, []);
 
   const onSubmit = async (data) => {
     try {
@@ -39,7 +39,7 @@ const AddDish = () => {
       formData.append('name', data.name);
       formData.append('description', data.description);
       formData.append('price', data.price);
-      formData.append('menuItem', data.menuItem); // Capture the menuItem from the form
+      // formData.append('menuItem', data.menuItem); // Capture the menuItem from the form
 
       // Append image if it exists
       if (selectedImage) {
@@ -51,7 +51,7 @@ const AddDish = () => {
       if (response.success === true) {
         toast.success('Dish added successfully!');
         reset(); // Reset form fields
-        navigate('/admin/manage-dishes');
+        navigate('/admin/manage-menu');
       } else {
         toast.error('Failed to add dish.');
       }
@@ -96,7 +96,7 @@ const AddDish = () => {
         </div>
 
         {/* Menu Items  */}
-        <div className="mb-4">
+        {/* <div className="mb-4">
           <label htmlFor="menuItems" className="block text-lg font-medium">Menu Items</label>
           <select
             id="menuItems"
@@ -109,7 +109,7 @@ const AddDish = () => {
               <option key={item._id} value={item._id}>{item.name}</option>
             ))}
           </select>
-        </div>
+        </div> */}
 
         <div className="mb-4">
           <label className="block mb-1 font-semibold">Image</label>

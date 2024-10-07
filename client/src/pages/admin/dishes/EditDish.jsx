@@ -9,11 +9,11 @@ const EditDish = () => {
   const { id } = useParams(); 
   const navigate = useNavigate();
   const { register, handleSubmit, reset, formState: { errors } } = useForm();
-  const [menuItems, setMenuItems] = useState([]);
+
   const [dishData, setDishData] = useState();
   const [selectedImage, setSelectedImage] = useState(null); // Image upload state
   const [currentImage, setCurrentImage] = useState(''); // Current image URL state
-  const [selectedMenuItem, setSelectedMenuItem] = useState(''); // New state to track selected menu item
+
   
   
   // Fetch dish data when the component loads
@@ -29,10 +29,9 @@ const EditDish = () => {
             name: dishData.name,
             description: dishData.description,
             price: dishData.price,
-            menuItem: dishData.menuItem.name
+
           });
-          setCurrentImage(dishData.image);
-          setSelectedMenuItem(dishData.menuItem._id); 
+
         }
       } catch (error) {
         toast.error('Failed to load dish data');
@@ -40,19 +39,19 @@ const EditDish = () => {
       }
     };
 
-    const fetchMenuItems = async () => {
-      try {
-        const response = await getAllMenuItems();
-        setMenuItems(response);
-        console.log(response, "menuItems");
-      } catch (error) {
-        console.error('Failed to fetch menu items', error);
-      }
-    };
+    // const fetchMenuItems = async () => {
+    //   try {
+    //     const response = await getAllMenuItems();
+    //     setMenuItems(response);
+    //     console.log(response, "menuItems");
+    //   } catch (error) {
+    //     console.error('Failed to fetch menu items', error);
+    //   }
+    // };
 
     // Call both functions
     fetchDish();
-    fetchMenuItems();
+    // fetchMenuItems();
   }, [id, reset]);
 
   const onSubmit = async (data) => {
@@ -61,7 +60,7 @@ const EditDish = () => {
       formData.append('name', data.name);
       formData.append('description', data.description);
       formData.append('price', data.price);
-      formData.append('menuItem', selectedMenuItem); // Pass the correct ObjectId for the menu item
+      // formData.append('menuItem', selectedMenuItem); // Pass the correct ObjectId for the menu item
       
       if (selectedImage) {
         formData.append('image', selectedImage);
@@ -86,9 +85,9 @@ const EditDish = () => {
     setSelectedImage(e.target.files[0]);
   };
 
-  const handleMenuItemChange = (e) => {
-    setSelectedMenuItem(e.target.value); // Update selected menu item when a new option is selected
-  };
+  // const handleMenuItemChange = (e) => {
+  //   setSelectedMenuItem(e.target.value); // Update selected menu item when a new option is selected
+  // };
 
   // Delete Dish
   const deleteThis = async (id) => {
@@ -145,39 +144,8 @@ const EditDish = () => {
           {errors.price && <p className="text-red-500 text-sm">{errors.price.message}</p>}
         </div>
 
-{/* Menu Item */}
-<div className="mb-4">
-  {/* Display Current Menu Item */}
-  {dishData?.menuItem && (
-    
-    <span className="block mb-2 text-lg ">
-      Menu Item: {dishData.menuItem.name}
-    </span>
-  )}
 
-  <label htmlFor="menuItems" className="block text-lg font-medium">Select New Menu Item</label>
-  <select
-    id="menuItems"
-    {...register('menuItem', { required: 'Menu item is required' })}
-    className="input input-bordered w-full"
-    value={selectedMenuItem} 
-    onChange={handleMenuItemChange} // Make sure this function sets selectedMenuItem
-  >
-    {/* Non-selectable option to show the current menu item */}
-    <option value="" disabled>
-      Current: {'No Menu Item Selected'}
-    </option>
 
-    {/* List of selectable menu items */}
-    {menuItems.map((item) => (
-      <option key={item._id} value={item._id}>
-        {item.name}
-      </option>
-    ))}
-  </select>
-
-  {errors.menuItem && <p className="text-red-500 text-sm">{errors.menuItem.message}</p>}
-</div>
 
         {/* Image Upload */}
         <div className="mb-4">
