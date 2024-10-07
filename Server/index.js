@@ -15,8 +15,11 @@ app.use(cors({
     "http://localhost:5174",
     "http://localhost:5175",
     ],
- credentials: true
-}))
+  credentials: true,
+  methods: ['GET', 'POST', 'PATCH', 'DELETE'], // Specify the methods allowed
+  allowedHeaders: ['Content-Type', 'Authorization'], // Add allowed headers if necessary
+}));
+
 app.use(express.json())
 app.use(cookieParser())
 
