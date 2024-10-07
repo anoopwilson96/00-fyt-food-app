@@ -14,19 +14,22 @@ export const OrderHistoryPage = () => {
           method: "GET",
           withCredentials: true,
         });
-        // Sorting the orders by createdAt in descending order (latest to oldest)
-        const sortedOrders = (response?.data?.cart ? [response.data.cart] : []).sort(
+  
+        // Assuming 'cart' is an array of orders, no need to wrap it in another array
+        const sortedOrders = (response?.data?.cart || []).sort(
           (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
         );
+  
         setOrders(sortedOrders);
-        console.log(response?.data); // Log the fetched data
+        console.log(response?.data); // Log the fetched data for debugging
       } catch (error) {
         console.log(error, "failed to fetch");
       }
     };
-
+  
     getHistory();
   }, []);
+  
 
   const handleRebook = async (orderId) => {
     try {
