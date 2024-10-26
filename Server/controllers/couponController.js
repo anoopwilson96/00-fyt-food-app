@@ -28,8 +28,6 @@ export const applyCoupon = async (req, res, next) => {
 };
 
 
-
-
 // Add a new coupon
 export const addCoupon = async (req, res) => {
   try {

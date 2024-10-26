@@ -171,7 +171,7 @@ export const Header = () => {
         <DarkMode />
 
         {/* Cart Icon with Dropdown */}
-        <div className="dropdown dropdown-end">
+        <div className="dropdown dropdown-hover">
           <div tabIndex={0} role="button" className="btn btn-ghost btn-circle">
             <div className="indicator text-slate-600">
               <svg
@@ -207,7 +207,7 @@ export const Header = () => {
         </div>
 
         {/* User Profile & Logout */}
-        <div className="dropdown dropdown-end">
+        <div className="dropdown dropdown-hover">
           <label tabIndex={0} className="btn btn-ghost btn-circle avatar">
             <div className="w-10 rounded-full">
               <img src={userImage || 'https://placeimg.com/80/80/people'} alt="User Avatar" />
