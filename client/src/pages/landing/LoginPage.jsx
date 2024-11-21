@@ -23,6 +23,7 @@ export const LoginPage = () => {
   useEffect(() => {
     const checkLogin = async () => {
       const response = await IsLoggedIn();
+      toast.success('Database Connected: Try Login')
       if (response?.success) {
         navigate('/user'); // Redirect to /user if already logged in
       }
