@@ -1,8 +1,10 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react'
 import { useForm } from "react-hook-form";
 import { useNavigate } from 'react-router-dom';
 import { signUpUser } from '../../services/userAPI';
 import toast from 'react-hot-toast';
+import { IoMdClose } from "react-icons/io";
+
 
 export const SignupLanding = () => {
   const navigate = useNavigate();
@@ -35,9 +37,52 @@ export const SignupLanding = () => {
     }
   };
 
+  const [warningShow,setWarningShow]= useState(true)
+
+  useEffect(()=>{
+    if (warningShow){
+      const timer = setInterval(()=>{
+        setWarningShow(false);
+      },15000)
+    }
+  },[warningShow])
+
+
+
   return (
-    <div className="hero bg-base-200 min-h-screen">
-      <div className="hero-content flex-col lg:flex-row-reverse">
+<main>
+  
+<div className='bg-base-200 flex flex-col justify-center items-center'>
+  { 
+warningShow &&  (
+  <div className=' flex  bg-red-600 p-4  flex-col justify-end mx-0 m-auto max-w-3xl relative'>
+  {/* Close Icon */}
+  <IoMdClose 
+    className='absolute top-2 right-2 text-white text-2xl cursor-pointer'
+    onClick={() => setWarningShow(false)} 
+  />
+  
+  {/* Content */}
+  <div className='text-white flex flex-col items-center'>
+    <h3 className='text-xl mb-2 font-semibold'>
+      Kindly note
+    </h3>
+    <p className='text-wrap p-4 text-center'>
+      The Database server is taking longer to connect.
+    </p>
+  </div>
+</div>
+)
+  } 
+</div>
+
+
+<div className="hero bg-base-200 min-h-screen">
+
+
+
+
+      <div className="hero-content flex-col lg:flex-row-reverse lg:m-16 lg:gap-40">
         <div className="text-center lg:text-left">
           <h1 className="text-5xl font-bold">Sign Up Now!</h1>
           <p className="py-6 text-wrap">
@@ -131,5 +176,8 @@ export const SignupLanding = () => {
         </div>
       </div>
     </div>
+
+    </main>
+
   );
 };
