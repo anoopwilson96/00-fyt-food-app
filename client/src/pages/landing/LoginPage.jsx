@@ -6,7 +6,7 @@ import { useNavigate} from 'react-router-dom';
 import { IoMdClose } from "react-icons/io";
 import { useEffect } from 'react';
 import { userLogin, IsLoggedIn } from '../../services/userAPI';
-// import { userLogin } from '../../services/userAPI';
+
 
 
 export const LoginPage = () => {
@@ -24,6 +24,7 @@ export const LoginPage = () => {
   useEffect(() => {
     const checkLogin = async () => {
       const response = await IsLoggedIn();
+      setWarningShow(false);
       toast.success('Database Connected: Try Login')
       if (response?.success) {
         navigate('/user'); // Redirect to /user if already logged in
@@ -34,13 +35,6 @@ export const LoginPage = () => {
 
 const [warningShow,setWarningShow]= useState(true)
 
-useEffect(()=>{
-  if (warningShow){
-    const timer = setInterval(()=>{
-      setWarningShow(false);
-    },15000)
-  }
-},[warningShow])
 
   const onSubmit = async (data) =>{
     try {
