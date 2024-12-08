@@ -43,7 +43,7 @@ export const SignupLanding = () => {
     if (warningShow){
       const timer = setInterval(()=>{
         setWarningShow(false);
-      },15000)
+      },8000)
     }
   },[warningShow])
 
@@ -68,7 +68,7 @@ warningShow &&  (
       Kindly note
     </h3>
     <p className='text-wrap p-4 text-center'>
-      The Database server is taking longer to connect.
+      The Database server is taking a longer time to connect.
     </p>
   </div>
 </div>
